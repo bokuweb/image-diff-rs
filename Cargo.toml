@@ -1,17 +1,6 @@
-[package]
-name = "image-diff-rs"
-version = "0.1.0"
-edition = "2018"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[lib]
-name = "image_diff"
-path = "src/lib.rs"
-
-[dependencies]
-webp = "0.2"
-pixelmatch-rs = { git = "https://github.com/bokuweb/pixelmatch-rs.git" }
-
-[build-dependencies]
-cc = "1.0"
+members = [
+    "core",
+    "wasm"
+]

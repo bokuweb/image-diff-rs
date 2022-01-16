@@ -1,41 +1,43 @@
 use std::os::raw::*;
 use std::path::Path;
 
-use pixelmatch::*;
+// use pixelmatch::*;
 
 extern "C" {
-    fn add_one(x: c_int) -> c_int;
+    // fn add_one(x: c_int) -> c_int;
     fn version() -> c_int;
-    fn decode(
-        data: *const c_uchar,
-        size: usize,
-        width: &mut c_int,
-        height: &mut c_int,
-    ) -> *const c_uchar;
+    // fn decode(
+    //     data: *const c_uchar,
+    //     size: usize,
+    //     width: &mut c_int,
+    //     height: &mut c_int,
+    // ) -> *const c_uchar;
 }
 
-fn add_two(v: i32) -> i32 {
-    unsafe { add_one(add_one(v)) }
-}
+// fn add_two(v: i32) -> i32 {
+//     unsafe { add_one(add_one(v)) }
+// }
 
-fn iversion() -> i32 {
+pub fn webp_version() -> i32 {
     unsafe { version() }
 }
 
-fn inner_decode(data: &[u8]) -> Result<Vec<u8>, ()> {
+pub fn inner_decode(data: &[u8]) -> Result<Vec<u8>, ()> {
     let mut w = 0;
     let mut h = 0;
 
-    let result = unsafe { decode(data.as_ptr(), data.len(), &mut w, &mut h) };
-    if result.is_null() {
-        //return Err(());
-        todo!()
-    }
-    dbg!(w, h, result);
+    // let result = unsafe { decode(data.as_ptr(), data.len(), &mut w, &mut h) };
+    // if result.is_null() {
+    //     //return Err(());
+    //     todo!()
+    // }
+    // dbg!(w, h, result);
 
-    Ok(unsafe { std::slice::from_raw_parts(result, w as usize * h as usize * 4) }.to_vec())
+    // Ok(unsafe { std::slice::from_raw_parts(result, w as usize * h as usize * 4) }.to_vec())
+    todo!();
 }
 
+/*
 pub struct DiffOutput {
     pub diff_count: usize,
     pub diff_image: Vec<u8>,
@@ -62,9 +64,4 @@ pub fn compare(img1: &[u8], img2: &[u8], dimensions: (u32, u32)) -> Result<DiffO
         diff_image: result.diff_image,
     })
 }
-
-pub fn test() {
-    println!("{}", iversion());
-    let data = include_bytes!("../test_webp_js.webp");
-    inner_decode(data);
-}
+*/
