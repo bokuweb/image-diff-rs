@@ -9,5 +9,8 @@ edition = "2018"
 name = "image_diff_rs"
 path = "src/lib.rs"
 
+[dependencies]
+pixelmatch-rs = { git = "https://github.com/bokuweb/pixelmatch-rs.git" }
+
 [build-dependencies]
 cc = "1.0"

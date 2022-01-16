@@ -1,5 +1,7 @@
 mod compare;
 
+pub use compare::*;
+
 pub fn version() -> i32 {
-    compare::webp_version()
+    webp_version()
 }

@@ -2,8 +2,7 @@ extern crate cc;
 
 fn main() {
     cc::Build::new()
-        .cpp(true)
-        .file("../core/src/test.cpp")
+        .file("../core/src/test.c")
         .file("../libwebp/src/enc/webp_enc.c")
         .file("../libwebp/src/dec/alpha_dec.c")
         .file("../libwebp/src/dec/webp_dec.c")
