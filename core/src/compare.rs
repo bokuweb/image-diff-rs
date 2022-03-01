@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use image::ImageDecoderExt;
 use pixelmatch::*;
 
 use super::*;
@@ -34,14 +35,18 @@ impl<P: AsRef<Path>> CompareInput<P> {
     }
 }
 
-pub fn compare<P: AsRef<Path>>(input: &CompareInput<P>) -> Result<DiffOutput, ()> {
+pub fn compare<P: AsRef<Path>>(input: &CompareInput<P>) -> Result<DiffOutput, ImageDiffError> {
     let decoded1 = decode(input.actual_filename.as_ref()).expect("todo");
     let decoded2 = decode(input.expected_filename.as_ref()).expect("todo");
 
     compare_buf(&decoded1.buf, &decoded2.buf, decoded1.dimensions)
 }
 
-pub fn compare_buf(img1: &[u8], img2: &[u8], dimensions: (u32, u32)) -> Result<DiffOutput, ()> {
+pub fn compare_buf(
+    img1: &[u8],
+    img2: &[u8],
+    dimensions: (u32, u32),
+) -> Result<DiffOutput, ImageDiffError> {
     let result = pixelmatch(
         img1,
         img2,
@@ -51,8 +56,8 @@ pub fn compare_buf(img1: &[u8], img2: &[u8], dimensions: (u32, u32)) -> Result<D
             include_anti_alias: true,
             ..PixelmatchOption::default()
         }),
-    )
-    .expect("TODO:");
+    )?;
+
     dbg!(&result.diff_count);
     Ok(DiffOutput {
         diff_count: result.diff_count,
