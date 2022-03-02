@@ -1,6 +1,5 @@
 use std::path::Path;
 
-use image::ImageDecoderExt;
 use pixelmatch::*;
 
 use super::*;

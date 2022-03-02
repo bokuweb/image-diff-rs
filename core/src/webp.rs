@@ -19,14 +19,24 @@ pub fn webp_version() -> i32 {
     unsafe { version() }
 }
 
-fn decode_buf(data: &[u8]) -> Result<DecodeOutput, ()> {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct WebPError;
+
+impl std::fmt::Display for WebPError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.write_str("WebP format error")
+    }
+}
+
+impl std::error::Error for WebPError {}
+
+fn decode_buf(data: &[u8]) -> Result<DecodeOutput, WebPError> {
     let mut w: i32 = 0;
     let mut h: i32 = 0;
 
     let result = unsafe { decode(data.as_ptr(), data.len(), &mut w, &mut h) };
     if result.is_null() {
-        //return Err(());
-        todo!()
+        return Err(WebPError);
     }
     Ok(DecodeOutput {
         buf: unsafe { std::slice::from_raw_parts(result, w as usize * h as usize * 4) }.to_vec(),
@@ -34,10 +44,12 @@ fn decode_buf(data: &[u8]) -> Result<DecodeOutput, ()> {
     })
 }
 
-pub fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ()> {
-    let mut file = File::open(path.as_ref()).unwrap();
+pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
+    let mut file = File::open(path.as_ref())?;
     let mut buf = Vec::new();
-    let _ = file.read_to_end(&mut buf).unwrap();
+    let _ = file.read_to_end(&mut buf)?;
 
-    Ok(decode_buf(&buf).expect("todo"))
+    decode_buf(&buf).map_err(|_| {
+        ImageDiffError::DecodeError(path.as_ref().to_str().expect("should convert").to_string())
+    })
 }
