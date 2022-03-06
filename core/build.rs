@@ -2,7 +2,7 @@ extern crate cc;
 
 fn main() {
     cc::Build::new()
-        .file("src/test.c")
+        .file("src/webp.c")
         .file("../libwebp/src/enc/webp_enc.c")
         .file("../libwebp/src/dec/alpha_dec.c")
         .file("../libwebp/src/dec/webp_dec.c")
@@ -41,5 +41,5 @@ fn main() {
         .file("../libwebp/src/utils/random_utils.c")
         .file("../libwebp/src/utils/quant_levels_dec_utils.c")
         .include("../libwebp")
-        .compile("test");
+        .compile("webp");
 }
