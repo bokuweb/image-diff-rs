@@ -8,11 +8,11 @@
 #include "../../libwebp/src/webp/decode.h"
 
 EMSCRIPTEN_KEEPALIVE
-int version() {
-  return WebPGetEncoderVersion();
+uint8_t* decode(const uint8_t* data, size_t data_size, int* width, int* height) {
+  return WebPDecodeRGBA(data, data_size, width, height);
 }
 
 EMSCRIPTEN_KEEPALIVE
-uint8_t* decode(const uint8_t* data, size_t data_size, int* width, int* height) {
-  return WebPDecodeRGBA(data, data_size, width, height);
+size_t encode(const uint8_t* rgba, int width, int height, int stride, uint8_t* output) {
+  return WebPEncodeLosslessRGBA(rgba, width, height, stride, &output);
 }

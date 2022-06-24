@@ -1,22 +1,24 @@
 use std::fs::File;
-use std::io::Read;
+use std::io::{self, BufReader, Read, Write};
 use std::os::raw::*;
 use std::path::Path;
 
 use super::*;
 
 extern "C" {
-    fn version() -> c_int;
     fn decode(
         data: *const c_uchar,
         size: usize,
         width: &mut c_int,
         height: &mut c_int,
     ) -> *const c_uchar;
-}
-
-pub fn webp_version() -> i32 {
-    unsafe { version() }
+    fn encode(
+        rgba: *const c_uchar,
+        width: c_int,
+        height: c_int,
+        stride: c_int,
+        output: *mut c_uchar,
+    ) -> usize;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -30,7 +32,7 @@ impl std::fmt::Display for WebPError {
 
 impl std::error::Error for WebPError {}
 
-fn decode_buf(data: &[u8]) -> Result<DecodeOutput, WebPError> {
+pub fn decode_buf(data: &[u8]) -> Result<DecodeOutput, WebPError> {
     let mut w: i32 = 0;
     let mut h: i32 = 0;
 
@@ -52,4 +54,34 @@ pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, Image
     decode_buf(&buf).map_err(|_| {
         ImageDiffError::DecodeError(path.as_ref().to_str().expect("should convert").to_string())
     })
+}
+
+fn encode_buf(rgba: &[u8], width: u32, height: u32) -> Result<EncodeOutput, WebPError> {
+    let mut output: Vec<u8> = vec![];
+    let result = unsafe {
+        encode(
+            rgba.as_ptr(),
+            width as i32,
+            height as i32,
+            (width * 4) as i32,
+            output.as_mut_ptr(),
+        )
+    };
+    if result == 0 {
+        return Err(WebPError);
+    }
+    Ok(EncodeOutput { buf: output })
+}
+
+pub(crate) fn encode_webp<P: AsRef<Path>>(
+    path: P,
+    rgba: &[u8],
+    width: u32,
+    height: u32,
+) -> Result<(), ImageDiffError> {
+    let result = encode_buf(rgba, width, height).unwrap();
+    let mut file = File::create("test.webp").unwrap();
+    file.write_all(&result.buf)?;
+    file.flush()?;
+    Ok(())
 }

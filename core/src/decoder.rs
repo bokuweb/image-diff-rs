@@ -4,10 +4,12 @@ use image::GenericImageView;
 
 use super::*;
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct DecodeOutput {
     pub buf: Vec<u8>,
     pub dimensions: (u32, u32),
 }
+
 pub fn decode<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
     let p = path.as_ref();
     let ext = p.extension().ok_or_else(|| {
@@ -23,6 +25,8 @@ pub fn decode<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
                 buf: opened.into_bytes(),
             })
         }
-        None => todo!(),
+        None => Err(ImageDiffError::ExtensionError(
+            "Failed to detect extension.".to_owned(),
+        )),
     }
 }
