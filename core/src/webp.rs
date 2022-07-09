@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{self, BufReader, Read, Write};
+use std::io::Read;
 use std::os::raw::*;
 use std::path::Path;
 
@@ -12,12 +12,21 @@ extern "C" {
         width: &mut c_int,
         height: &mut c_int,
     ) -> *const c_uchar;
+    #[allow(dead_code)]
+    fn encode_lossless(
+        rgba: *const c_uchar,
+        width: c_int,
+        height: c_int,
+        stride: c_int,
+        output: &mut *mut c_uchar,
+    ) -> usize;
     fn encode(
         rgba: *const c_uchar,
         width: c_int,
         height: c_int,
         stride: c_int,
-        output: *mut c_uchar,
+        quality: c_double,
+        output: &mut *mut c_uchar,
     ) -> usize;
 }
 
@@ -56,10 +65,15 @@ pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, Image
     })
 }
 
-fn encode_buf(rgba: &[u8], width: u32, height: u32) -> Result<EncodeOutput, WebPError> {
+fn encode_buf(
+    rgba: &[u8],
+    width: u32,
+    height: u32,
+    quality: f64,
+) -> Result<EncodeOutput, WebPError> {
     // For now reserve rgba size.
     let mut output: Vec<u8> = Vec::with_capacity(rgba.len());
-    let ptr = output.as_mut_ptr();
+    let mut ptr = output.as_mut_ptr();
 
     let result = unsafe {
         encode(
@@ -67,26 +81,28 @@ fn encode_buf(rgba: &[u8], width: u32, height: u32) -> Result<EncodeOutput, WebP
             width as i32,
             height as i32,
             (width * 4) as i32,
-            ptr,
+            quality,
+            &mut ptr,
         )
     };
     if result == 0 {
         return Err(WebPError);
     }
-    let res = unsafe { std::slice::from_raw_parts(ptr, result) }.to_vec();
-    Ok(EncodeOutput { buf: res })
+    let buf = unsafe { std::slice::from_raw_parts(ptr, result) }.to_vec();
+    Ok(EncodeOutput { buf })
 }
 
-pub(crate) fn encode_webp<P: AsRef<Path>>(
-    path: P,
+pub(crate) fn encode_webp(
     rgba: &[u8],
     width: u32,
     height: u32,
-) -> Result<(), ImageDiffError> {
-    let result = encode_buf(rgba, width, height).unwrap();
-    let mut file = File::create("./test.webp").unwrap();
-    file.write_all(&result.buf)?;
-    file.flush()?;
-    dbg!("asdad");
-    Ok(())
+    quality: f64,
+) -> Result<Vec<u8>, ImageDiffError> {
+    let result = encode_buf(rgba, width, height, quality);
+    match result {
+        Ok(result) => Ok(result.buf),
+        _ => Err(ImageDiffError::EncodeError(
+            "It is not able to encode.".to_string(),
+        )),
+    }
 }

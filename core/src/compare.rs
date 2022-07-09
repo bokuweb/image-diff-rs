@@ -16,25 +16,20 @@ pub struct DiffOutput {
 pub struct CompareInput<P: AsRef<Path>> {
     pub actual_filename: P,
     pub expected_filename: P,
-    pub diff_filename: Option<P>,
+    pub diff_filename: P,
     pub threshold: Option<f32>,
     pub include_anti_alias: Option<bool>,
 }
 
 impl<P: AsRef<Path>> CompareInput<P> {
-    pub fn new(actual_filename: P, expected_filename: P) -> Self {
+    pub fn new(actual_filename: P, expected_filename: P, diff_filename: P) -> Self {
         Self {
             actual_filename,
             expected_filename,
-            diff_filename: None,
+            diff_filename,
             threshold: None,
             include_anti_alias: None,
         }
-    }
-
-    pub fn diff_filename(&mut self, p: P) -> &mut Self {
-        self.diff_filename = Some(p);
-        self
     }
 }
 

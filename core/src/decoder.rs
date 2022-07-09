@@ -13,7 +13,7 @@ pub struct DecodeOutput {
 pub fn decode<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
     let p = path.as_ref();
     let ext = p.extension().ok_or_else(|| {
-        ImageDiffError::ExtensionError(p.to_str().expect("should convert").to_string())
+        ImageDiffError::InputExtensionError(p.to_str().expect("should convert").to_string())
     })?;
 
     match ext.to_str() {
@@ -25,8 +25,6 @@ pub fn decode<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
                 buf: opened.into_bytes(),
             })
         }
-        None => Err(ImageDiffError::ExtensionError(
-            "Failed to detect extension.".to_owned(),
-        )),
+        None => Err(ImageDiffError::InputExtensionError("none".to_owned())),
     }
 }
