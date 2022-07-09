@@ -57,20 +57,24 @@ pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, Image
 }
 
 fn encode_buf(rgba: &[u8], width: u32, height: u32) -> Result<EncodeOutput, WebPError> {
-    let mut output: Vec<u8> = vec![];
+    // For now reserve rgba size.
+    let mut output: Vec<u8> = Vec::with_capacity(rgba.len());
+    let ptr = output.as_mut_ptr();
+
     let result = unsafe {
         encode(
             rgba.as_ptr(),
             width as i32,
             height as i32,
             (width * 4) as i32,
-            output.as_mut_ptr(),
+            ptr,
         )
     };
     if result == 0 {
         return Err(WebPError);
     }
-    Ok(EncodeOutput { buf: output })
+    let res = unsafe { std::slice::from_raw_parts(ptr, result) }.to_vec();
+    Ok(EncodeOutput { buf: res })
 }
 
 pub(crate) fn encode_webp<P: AsRef<Path>>(
@@ -80,8 +84,9 @@ pub(crate) fn encode_webp<P: AsRef<Path>>(
     height: u32,
 ) -> Result<(), ImageDiffError> {
     let result = encode_buf(rgba, width, height).unwrap();
-    let mut file = File::create("test.webp").unwrap();
+    let mut file = File::create("./test.webp").unwrap();
     file.write_all(&result.buf)?;
     file.flush()?;
+    dbg!("asdad");
     Ok(())
 }

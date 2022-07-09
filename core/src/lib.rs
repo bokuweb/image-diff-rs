@@ -19,6 +19,7 @@ pub fn diff<P: AsRef<Path>>(input: &CompareInput<P>) -> Result<DiffOutput, Image
     let decoded2 = decode(input.expected_filename.as_ref())?;
     let p = "";
     let result = compare(input)?;
+    dbg!(&result.width, &result.height, result.diff_count);
     encode(
         input.diff_filename.as_ref().unwrap(),
         &result.diff_image,
