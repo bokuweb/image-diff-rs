@@ -4,26 +4,25 @@ mod compare;
 mod decoder;
 mod encoder;
 mod error;
-mod types;
 mod webp;
 
 pub use compare::*;
 pub use decoder::*;
 pub use encoder::*;
 pub use error::*;
-pub use types::*;
 pub use webp::*;
 
 #[derive(Debug, Default, PartialEq, Clone)]
-pub struct DiffInput<P: AsRef<Path> + Clone> {
+pub struct DiffFilesInput<P: AsRef<Path> + Clone> {
     pub actual_filename: P,
     pub expected_filename: P,
     pub diff_filename: P,
     pub threshold: Option<f32>,
     pub include_anti_alias: Option<bool>,
+    pub webp_quality: Option<f32>,
 }
 
-impl<P: AsRef<Path> + Clone> DiffInput<P> {
+impl<P: AsRef<Path> + Clone> DiffFilesInput<P> {
     pub fn new(actual_filename: P, expected_filename: P, diff_filename: P) -> Self {
         Self {
             actual_filename,
@@ -31,11 +30,14 @@ impl<P: AsRef<Path> + Clone> DiffInput<P> {
             diff_filename,
             threshold: None,
             include_anti_alias: None,
+            webp_quality: None,
         }
     }
 }
 
-pub fn diff<P: AsRef<Path> + Clone>(input: DiffInput<P>) -> Result<DiffOutput, ImageDiffError> {
+pub fn diff_files<P: AsRef<Path> + Clone>(
+    input: DiffFilesInput<P>,
+) -> Result<DiffOutput, ImageDiffError> {
     use std::{fs::File, io::Write};
 
     let result = compare(&CompareInput {
@@ -58,7 +60,7 @@ pub fn diff<P: AsRef<Path> + Clone>(input: DiffInput<P>) -> Result<DiffOutput, I
         &result.diff_image,
         result.width,
         result.height,
-        70.0,
+        input.webp_quality.unwrap_or(100.0),
     )?;
 
     let mut file = File::create(&input.diff_filename)?;
@@ -68,23 +70,35 @@ pub fn diff<P: AsRef<Path> + Clone>(input: DiffInput<P>) -> Result<DiffOutput, I
     Ok(result)
 }
 
-pub fn diff_without_saving<P: AsRef<Path>>(
-    input: &CompareInput<P>,
-) -> Result<DiffOutput, ImageDiffError> {
-    let result = compare(input)?;
-    let ext = input
-        .diff_filename
-        .as_ref()
-        .extension()
-        .ok_or_else(|| ImageDiffError::OutputExtensionError("none".to_string()))?;
+pub struct DiffInput<'a> {
+    pub actual_buf: &'a [u8],
+    pub expected_buf: &'a [u8],
+    pub threshold: Option<f32>,
+    pub include_anti_alias: Option<bool>,
+}
 
-    let diff_encoded = encode(
-        ext.to_str().unwrap_or("png"),
-        &result.diff_image,
-        result.width,
-        result.height,
-        70.0,
+impl<'a> DiffInput<'a> {
+    pub fn new(actual_buf: &'a [u8], expected_buf: &'a [u8]) -> Self {
+        Self {
+            actual_buf,
+            expected_buf,
+            threshold: None,
+            include_anti_alias: None,
+        }
+    }
+}
+
+pub fn diff(input: &DiffInput) -> Result<DiffOutput, ImageDiffError> {
+    let img1 = decode_buf(input.actual_buf)?;
+    let img2 = decode_buf(input.expected_buf)?;
+    let result = compare_buf(
+        &img1.buf,
+        &img2.buf,
+        img1.dimensions,
+        CompareOption {
+            threshold: input.threshold.unwrap_or_default(),
+            enable_anti_alias: input.include_anti_alias.unwrap_or_default(),
+        },
     )?;
-
     Ok(result)
 }

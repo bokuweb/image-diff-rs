@@ -10,7 +10,7 @@ pub fn encode(
     rgba: &[u8],
     width: u32,
     height: u32,
-    quality: f64,
+    quality: f32,
 ) -> Result<Vec<u8>, ImageDiffError> {
     match ext {
         "webp" => Ok(encode_webp(rgba, width, height, quality)?),

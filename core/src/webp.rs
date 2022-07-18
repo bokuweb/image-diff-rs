@@ -25,7 +25,7 @@ extern "C" {
         width: c_int,
         height: c_int,
         stride: c_int,
-        quality: c_double,
+        quality: c_float,
         output: &mut *mut c_uchar,
     ) -> usize;
 }
@@ -41,7 +41,7 @@ impl std::fmt::Display for WebPError {
 
 impl std::error::Error for WebPError {}
 
-pub fn decode_buf(data: &[u8]) -> Result<DecodeOutput, WebPError> {
+pub fn decode_webp_buf(data: &[u8]) -> Result<DecodeOutput, WebPError> {
     let mut w: i32 = 0;
     let mut h: i32 = 0;
 
@@ -60,7 +60,7 @@ pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, Image
     let mut buf = Vec::new();
     let _ = file.read_to_end(&mut buf)?;
 
-    decode_buf(&buf).map_err(|_| {
+    decode_webp_buf(&buf).map_err(|_| {
         ImageDiffError::DecodeError(path.as_ref().to_str().expect("should convert").to_string())
     })
 }
@@ -69,7 +69,7 @@ fn encode_buf(
     rgba: &[u8],
     width: u32,
     height: u32,
-    quality: f64,
+    quality: f32,
 ) -> Result<EncodeOutput, WebPError> {
     // For now reserve rgba size.
     let mut output: Vec<u8> = Vec::with_capacity(rgba.len());
@@ -96,7 +96,7 @@ pub(crate) fn encode_webp(
     rgba: &[u8],
     width: u32,
     height: u32,
-    quality: f64,
+    quality: f32,
 ) -> Result<Vec<u8>, ImageDiffError> {
     let result = encode_buf(rgba, width, height, quality);
     match result {
