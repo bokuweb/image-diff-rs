@@ -11,7 +11,7 @@ path = "src/lib.rs"
 
 [dependencies]
 pixelmatch-rs = { git = "https://github.com/bokuweb/pixelmatch-rs.git" }
-image = { version = "0.24.2", default-features = false, features=["gif", "jpeg", "png", "tiff", "bmp", "avif"] }
+image = { version = "0.24.2", default-features = false, features=["gif", "jpeg", "png", "tiff", "bmp"] }
 thiserror = "1.0"
 
 [build-dependencies]
