@@ -47,6 +47,7 @@ fn main() {
         .file("../libwebp/src/dsp/filters_mips_dsp_r2.c")
         .file("../libwebp/src/dsp/lossless.c")
         .file("../libwebp/src/dsp/lossless_mips_dsp_r2.c")
+        .file("../libwebp/src/dsp/lossless_sse41.c")
         .file("../libwebp/src/dsp/rescaler.c")
         .file("../libwebp/src/dsp/rescaler_mips32.c")
         .file("../libwebp/src/dsp/rescaler_mips_dsp_r2.c")
