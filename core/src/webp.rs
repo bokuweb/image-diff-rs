@@ -76,12 +76,11 @@ fn encode_buf(
     let mut ptr = output.as_mut_ptr();
 
     let result = unsafe {
-        encode(
+        encode_lossless(
             rgba.as_ptr(),
             width as i32,
             height as i32,
             (width * 4) as i32,
-            quality,
             &mut ptr,
         )
     };
