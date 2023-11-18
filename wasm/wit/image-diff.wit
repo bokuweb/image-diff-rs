@@ -13,15 +13,15 @@ interface types {
     include-anti-alias: option<bool>,
   }
 
-  enum error {
-    input,
-    decode,
-    encode,
-    unknown,
+  variant error {
+    decode(string),
+    encode(string),
+    image-length(string),
   }
 }
 
 world image-diff {
+
   use types.{opts, output, error};
 
   export diff: func(imga: list<u8>, imgb: list<u8>, opts: opts) -> result<output, error>;
