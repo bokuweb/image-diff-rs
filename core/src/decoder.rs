@@ -13,7 +13,7 @@ pub struct DecodeOutput {
 pub fn decode<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
     let p = path.as_ref();
     let ext = p.extension().ok_or_else(|| {
-        ImageDiffError::InputExtensionError(p.to_str().expect("should convert").to_string())
+        ImageDiffError::InputExtension(p.to_str().expect("should convert").to_string())
     })?;
 
     match ext.to_str() {
@@ -25,7 +25,7 @@ pub fn decode<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
                 buf: opened.into_bytes(),
             })
         }
-        None => Err(ImageDiffError::InputExtensionError("none".to_owned())),
+        None => Err(ImageDiffError::InputExtension("none".to_owned())),
     }
 }
 
@@ -34,15 +34,19 @@ pub fn decode_buf(buf: &[u8]) -> Result<DecodeOutput, ImageDiffError> {
         // RIFF .... WEBP
         [b'R', b'I', b'F', b'F', _, _, _, _, b'W', b'E', b'B', b'P', ..] => {
             Ok(decode_webp_buf(buf).map_err(|_| {
-                ImageDiffError::DecodeError(("Failed to decode as webp format").to_string())
+                ImageDiffError::Decode(("Failed to decode as webp format").to_string())
             })?)
         }
         _ => {
-            let opened = image::load_from_memory(buf)?;
-            Ok(DecodeOutput {
-                dimensions: opened.dimensions(),
-                buf: opened.into_bytes(),
-            })
+            let i = image::load_from_memory(buf);
+            if let Ok(opened) = i {
+                Ok(DecodeOutput {
+                    dimensions: opened.dimensions(),
+                    buf: opened.into_bytes(),
+                })
+            } else {
+                Err(ImageDiffError::Decode(i.unwrap_err().to_string()))
+            }
         }
     }
 }

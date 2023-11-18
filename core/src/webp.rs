@@ -53,7 +53,7 @@ pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, Image
     let _ = file.read_to_end(&mut buf)?;
 
     decode_webp_buf(&buf).map_err(|_| {
-        ImageDiffError::DecodeError(path.as_ref().to_str().expect("should convert").to_string())
+        ImageDiffError::Decode(path.as_ref().to_str().expect("should convert").to_string())
     })
 }
 
@@ -82,7 +82,7 @@ pub(crate) fn encode_webp(rgba: &[u8], width: u32, height: u32) -> Result<Vec<u8
     let result = encode_buf(rgba, width, height);
     match result {
         Ok(result) => Ok(result.buf),
-        _ => Err(ImageDiffError::EncodeError(
+        _ => Err(ImageDiffError::Encode(
             "It is not able to encode.".to_string(),
         )),
     }

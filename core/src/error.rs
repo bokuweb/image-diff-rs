@@ -4,15 +4,15 @@ use thiserror::Error;
 
 pub enum ImageDiffError {
     #[error(transparent)]
-    FileOpen(#[from] std::io::Error),
+    File(#[from] std::io::Error),
     #[error("specified input file extension is not supported. this library support `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.png`, `*.tiff`, `*.bmp` files. but got {0}")]
-    InputExtensionError(String),
+    InputExtension(String),
     #[error("specified output file extension is not supported. this library support `*.webp`, `*.png` files. but got {0}")]
-    OutputExtensionError(String),
+    OutputExtension(String),
     #[error("it is not able to decode {0}.")]
-    DecodeError(String),
+    Decode(String),
     #[error("it is not able to encode {0}.")]
-    EncodeError(String),
+    Encode(String),
     #[error(transparent)]
     Image(#[from] image::ImageError),
     #[error("unknown diff error")]

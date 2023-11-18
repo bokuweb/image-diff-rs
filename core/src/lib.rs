@@ -57,34 +57,25 @@ pub fn diff_files<P: AsRef<Path> + Clone>(
     Ok(result)
 }
 
-pub struct DiffInput<'a> {
-    pub actual_buf: &'a [u8],
-    pub expected_buf: &'a [u8],
+pub struct DiffOption {
     pub threshold: Option<f32>,
     pub include_anti_alias: Option<bool>,
 }
 
-impl<'a> DiffInput<'a> {
-    pub fn new(actual_buf: &'a [u8], expected_buf: &'a [u8]) -> Self {
-        Self {
-            actual_buf,
-            expected_buf,
-            threshold: None,
-            include_anti_alias: None,
-        }
-    }
-}
-
-pub fn diff(input: &DiffInput) -> Result<DiffOutput, ImageDiffError> {
-    let img1 = decode_buf(input.actual_buf)?;
-    let img2 = decode_buf(input.expected_buf)?;
+pub fn diff(
+    actual: impl AsRef<[u8]>,
+    expected: impl AsRef<[u8]>,
+    option: &DiffOption,
+) -> Result<DiffOutput, ImageDiffError> {
+    let img1 = decode_buf(actual.as_ref())?;
+    let img2 = decode_buf(expected.as_ref())?;
     let result = compare_buf(
         &img1.buf,
         &img2.buf,
         img1.dimensions,
         CompareOption {
-            threshold: input.threshold.unwrap_or_default(),
-            enable_anti_alias: input.include_anti_alias.unwrap_or_default(),
+            threshold: option.threshold.unwrap_or_default(),
+            enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
         },
     )?;
     Ok(result)

@@ -1,24 +1,28 @@
-use image_diff_rs::DiffInput;
+use image_diff_rs::DiffOption;
 
-#[no_mangle]
-pub fn diff(
-    imga: &[u8],
-    imgb: &[u8],
-    output: &mut *const u8,
-    output_length: &mut usize,
-    output_width: &mut u32,
-    output_height: &mut u32,
-    diff_count: &mut u32,
-) {
-    let res = image_diff_rs::diff(&DiffInput {
-        actual_buf: imga,
-        expected_buf: imgb,
-        threshold: None,
-        include_anti_alias: None,
-    });
-    let res = res.expect("TODO:");
-    let diff_img = res.diff_image;
-    *output_length = diff_img.len();
-    *output = diff_img.as_ptr();
-    std::mem::forget(diff_img);
+wit_bindgen::generate!({
+ world: "image-diff",
+ exports: {
+     world: ImageDiff,
+ }
+});
+
+struct ImageDiff;
+
+impl Guest for ImageDiff {
+    fn diff(
+        imga: Vec<u8>,
+        imgb: Vec<u8>,
+        opts: bokuweb::image_diff::types::Opts,
+    ) -> Result<bokuweb::image_diff::types::Output, bokuweb::image_diff::types::Error> {
+        let _res = image_diff_rs::diff(
+            imga,
+            imgb,
+            &DiffOption {
+                threshold: opts.threshold,
+                include_anti_alias: opts.include_anti_alias,
+            },
+        );
+        todo!();
+    }
 }
