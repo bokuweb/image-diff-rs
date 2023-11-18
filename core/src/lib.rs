@@ -48,20 +48,7 @@ pub fn diff_files<P: AsRef<Path> + Clone>(
         include_anti_alias: input.include_anti_alias,
     })?;
 
-    let ext = input
-        .diff_filename
-        .as_ref()
-        .clone()
-        .extension()
-        .ok_or_else(|| ImageDiffError::OutputExtensionError("none".to_string()))?;
-
-    let diff_encoded = encode(
-        ext.to_str().unwrap_or("png"),
-        &result.diff_image,
-        result.width,
-        result.height,
-        input.webp_quality.unwrap_or(100.0),
-    )?;
+    let diff_encoded = encode(&result.diff_image, result.width, result.height)?;
 
     let mut file = File::create(&input.diff_filename)?;
     file.write_all(&diff_encoded)?;
