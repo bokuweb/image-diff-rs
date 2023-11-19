@@ -12,3 +12,7 @@ wit-bindgen = "0.14.0"
 
 [lib]
 crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+opt-level = 2

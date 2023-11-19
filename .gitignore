@@ -1,1 +1,5 @@
 target
+memo.md
+.wasm
+.js
+wasi-sdk
