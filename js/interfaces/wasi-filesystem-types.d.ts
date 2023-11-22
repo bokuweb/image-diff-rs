@@ -4,7 +4,7 @@ export namespace WasiFilesystemTypes {
   export { DirectoryEntryStream };
 }
 export type Filesize = bigint;
-import type { OutputStream } from '../interfaces/wasi-io-streams.js';
+import type { OutputStream } from './wasi-io-streams.js';
 export { OutputStream };
 /**
  * # Variants
@@ -105,7 +105,7 @@ export type ErrorCode = 'access' | 'would-block' | 'already' | 'bad-descriptor' 
  */
 export type DescriptorType = 'unknown' | 'block-device' | 'character-device' | 'directory' | 'fifo' | 'symbolic-link' | 'regular-file' | 'socket';
 export type LinkCount = bigint;
-import type { Datetime } from '../interfaces/wasi-clocks-wall-clock.js';
+import type { Datetime } from './wasi-clocks-wall-clock.js';
 export { Datetime };
 export interface DescriptorStat {
   type: DescriptorType,
@@ -115,7 +115,7 @@ export interface DescriptorStat {
   dataModificationTimestamp?: Datetime,
   statusChangeTimestamp?: Datetime,
 }
-import type { Error } from '../interfaces/wasi-io-streams.js';
+import type { Error } from './wasi-io-streams.js';
 export { Error };
 
 export class Descriptor {
