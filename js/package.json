@@ -1,0 +1,17 @@
+{
+  "name": "@bokuweb/image-diff-wasm",
+  "version": "0.1.0",
+  "repository": "https://github.com/bokuweb/image-diff-rs",
+  "author": "<bokuweb12@gmail.com>",
+  "license": "MIT",
+  "main": "index.mjs",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "node examples/index.mjs"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@bytecodealliance/preview2-shim": "^0.0.21"
+  },
+  "devDependencies": {}
+}

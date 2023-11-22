@@ -1,7 +1,9 @@
 use image_diff_rs::*;
 
 pub fn main() {
-    dbg!(version());
-    let data = include_bytes!("../../test_webp_js.webp");
-    decode_webp(data);
+    diff_files(DiffFilesInput::new(
+        "./fixtures/sample0.webp",
+        "./fixtures/sample1.webp",
+        "./diff.webp",
+    ));
 }

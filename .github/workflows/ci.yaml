@@ -1,0 +1,38 @@
+name: Continuous Integration
+on: [push, pull_request]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node:
+    runs-on: ubuntu-20.04
+    defaults:
+        run:
+          working-directory: js
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: install dependencies
+        run: pnpm i --frozen-lockfile
+      - name: test
+        run: node examples/index.mjs
+  deno:
+    runs-on: ubuntu-20.04
+    defaults:
+        run:
+          working-directory: js
+    steps:
+      - uses: actions/checkout@master
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: test
+        run: deno run -A examples/index.mjs
+
+
+
+

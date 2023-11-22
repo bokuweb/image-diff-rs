@@ -1,0 +1,28 @@
+package bokuweb:image-diff;
+
+interface types {
+  record output {
+    diff-count: u32,
+    diff-image: list<u8>,
+    width: u32,
+    height: u32,
+  }
+
+  record opts {
+    threshold: option<float32>,
+    include-anti-alias: option<bool>,
+  }
+
+  variant error {
+    decode(string),
+    encode(string),
+    image-length(string),
+  }
+}
+
+world image-diff {
+
+  use types.{opts, output, error};
+
+  export diff: func(imga: list<u8>, imgb: list<u8>, opts: opts) -> result<output, error>;
+}
