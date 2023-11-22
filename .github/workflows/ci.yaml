@@ -5,7 +5,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-node:
+  node:
     runs-on: ubuntu-20.04
     defaults:
         run:
@@ -20,6 +20,18 @@ jobs:
         run: pnpm i --frozen-lockfile
       - name: test
         run: node examples/index.mjs
+  deno:
+    runs-on: ubuntu-20.04
+    defaults:
+        run:
+          working-directory: node
+    steps:
+      - uses: actions/checkout@master
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: test
+        run: deno run -A node/examples/index.mjs
 
 
 
