@@ -219,6 +219,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "image-diff-cli"
+version = "0.1.0"
+dependencies = [
+ "image-diff-rs",
+]
+
+[[package]]
 name = "image-diff-rs"
 version = "0.1.0"
 dependencies = [
