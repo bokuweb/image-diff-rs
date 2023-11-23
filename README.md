@@ -8,6 +8,10 @@ $ cd wasm && cargo rustc --target=wasm32-unknown-emscripten -- -C link-args="-s 
 AR=llvm-ar CFLAGS='--sysroot ../wasi-sdk/share/wasi-sysroot' cargo wasi build --release
 ```
 
+``` sh
+wasm-tools component new target/wasm32-wasi/release/image_diff_wasm.wasm -o wasm/component.wasm --adapt wasm/wasi_snapshot_preview1.wasm
+```
+
 
 ``` sh
 jco transpile component.wasm -o js --name index && mv js/index.js js/index.mjs
