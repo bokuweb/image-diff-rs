@@ -69,7 +69,8 @@ pub fn compare_buf(
             include_anti_alias: true,
             ..PixelmatchOption::default()
         }),
-    )?;
+    )
+    .expect("pixelmatch should succeed, but it panicked. This appears to be a bug");
     Ok(DiffOutput {
         diff_count: result.diff_count,
         diff_image: result.diff_image,

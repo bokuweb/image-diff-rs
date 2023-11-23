@@ -13,15 +13,4 @@ pub enum ImageDiffError {
     Encode(String),
     #[error(transparent)]
     Image(#[from] image::ImageError),
-    #[error("input buf length error. please input same length images.")]
-    ImageLength,
-}
-
-impl From<pixelmatch::PixelmatchError> for ImageDiffError {
-    fn from(error: pixelmatch::PixelmatchError) -> Self {
-        match error {
-            pixelmatch::PixelmatchError::ImageLengthError => Self::ImageLength,
-            _ => unreachable!(),
-        }
-    }
 }
