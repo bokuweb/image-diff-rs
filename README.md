@@ -16,3 +16,12 @@ wasm-tools component new target/wasm32-wasi/release/image_diff_wasm.wasm -o wasm
 ``` sh
 jco transpile component.wasm -o js --name index && mv js/index.js js/index.mjs
 ```
+
+```
+wasm-tools component new target/wasm32-wasi/release/rayon_test.wasm -o component.wasm --adapt wasi_snapshot_preview1.wasm 
+```
+
+```
+wasm-tools --version
+wasm-tools 1.0.53
+```

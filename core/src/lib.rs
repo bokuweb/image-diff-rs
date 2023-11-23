@@ -40,5 +40,10 @@ pub fn diff(
             enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
         },
     )?;
-    Ok(result)
+    Ok(DiffOutput {
+        diff_count: result.diff_count,
+        diff_image: encode(&result.diff_image, result.width, result.height)?,
+        width: result.width,
+        height: result.height,
+    })
 }

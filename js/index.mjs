@@ -1,23 +1,18 @@
-import { environment, exit as exit$1, stderr, stdin, stdout, terminalInput, terminalOutput, terminalStderr, terminalStdin, terminalStdout } from '@bytecodealliance/preview2-shim/cli';
+import { environment, exit as exit$1, stderr, stdin, stdout } from '@bytecodealliance/preview2-shim/cli';
 import { preopens, types } from '@bytecodealliance/preview2-shim/filesystem';
-import { streams } from '@bytecodealliance/preview2-shim/io';
+import { error, streams } from '@bytecodealliance/preview2-shim/io';
 import { random } from '@bytecodealliance/preview2-shim/random';
 const { getEnvironment } = environment;
 const { exit } = exit$1;
 const { getStderr } = stderr;
 const { getStdin } = stdin;
 const { getStdout } = stdout;
-const { TerminalInput } = terminalInput;
-const { TerminalOutput } = terminalOutput;
-const { getTerminalStderr } = terminalStderr;
-const { getTerminalStdin } = terminalStdin;
-const { getTerminalStdout } = terminalStdout;
 const { getDirectories } = preopens;
 const { Descriptor,
   DirectoryEntryStream,
   filesystemErrorCode } = types;
-const { Error: Error$1,
-  InputStream,
+const { Error: Error$1 } = error;
+const { InputStream,
   OutputStream } = streams;
 const { getRandomBytes } = random;
 
@@ -96,17 +91,17 @@ function utf8Encode(s, realloc, memory) {
 let exports0;
 let exports1;
 
-function trampoline8() {
+function trampoline5() {
   const ret = getStderr();
   if (!(ret instanceof OutputStream)) {
     throw new Error('Not a valid "OutputStream" resource.');
   }
-  const handle0 = handleCnt0++;
-  handleTable0.set(handle0, { rep: ret, own: true });
+  const handle0 = handleCnt1++;
+  handleTable1.set(handle0, { rep: ret, own: true });
   return handle0;
 }
 
-function trampoline9(arg0) {
+function trampoline6(arg0) {
   let variant0;
   switch (arg0) {
     case 0: {
@@ -130,7 +125,7 @@ function trampoline9(arg0) {
   exit(variant0);
 }
 
-function trampoline10() {
+function trampoline7() {
   const ret = getStdin();
   if (!(ret instanceof InputStream)) {
     throw new Error('Not a valid "InputStream" resource.');
@@ -140,18 +135,18 @@ function trampoline10() {
   return handle0;
 }
 
-function trampoline11() {
+function trampoline8() {
   const ret = getStdout();
   if (!(ret instanceof OutputStream)) {
     throw new Error('Not a valid "OutputStream" resource.');
   }
-  const handle0 = handleCnt0++;
-  handleTable0.set(handle0, { rep: ret, own: true });
+  const handle0 = handleCnt1++;
+  handleTable1.set(handle0, { rep: ret, own: true });
   return handle0;
 }
 let exports2;
 
-function trampoline12(arg0) {
+function trampoline9(arg0) {
   const ret = getDirectories();
   const vec3 = ret;
   const len3 = vec3.length;
@@ -176,7 +171,7 @@ function trampoline12(arg0) {
 let memory0;
 let realloc0;
 
-function trampoline13(arg0, arg1, arg2) {
+function trampoline10(arg0, arg1, arg2) {
   const handle1 = arg0;
   const rsc0 = handleTable3.get(handle1).rep;
   let ret;
@@ -193,8 +188,8 @@ function trampoline13(arg0, arg1, arg2) {
       if (!(e instanceof OutputStream)) {
         throw new Error('Not a valid "OutputStream" resource.');
       }
-      const handle2 = handleCnt0++;
-      handleTable0.set(handle2, { rep: e, own: true });
+      const handle2 = handleCnt1++;
+      handleTable1.set(handle2, { rep: e, own: true });
       dataView(memory0).setInt32(arg2 + 4, handle2, true);
       break;
     }
@@ -369,7 +364,7 @@ function trampoline13(arg0, arg1, arg2) {
   }
 }
 
-function trampoline14(arg0, arg1) {
+function trampoline11(arg0, arg1) {
   const handle1 = arg0;
   const rsc0 = handleTable3.get(handle1).rep;
   let ret;
@@ -386,8 +381,8 @@ function trampoline14(arg0, arg1) {
       if (!(e instanceof OutputStream)) {
         throw new Error('Not a valid "OutputStream" resource.');
       }
-      const handle2 = handleCnt0++;
-      handleTable0.set(handle2, { rep: e, own: true });
+      const handle2 = handleCnt1++;
+      handleTable1.set(handle2, { rep: e, own: true });
       dataView(memory0).setInt32(arg1 + 4, handle2, true);
       break;
     }
@@ -562,7 +557,7 @@ function trampoline14(arg0, arg1) {
   }
 }
 
-function trampoline15(arg0, arg1) {
+function trampoline12(arg0, arg1) {
   const handle1 = arg0;
   const rsc0 = handleTable3.get(handle1).rep;
   let ret;
@@ -793,7 +788,7 @@ function trampoline15(arg0, arg1) {
   }
 }
 
-function trampoline16(arg0, arg1) {
+function trampoline13(arg0, arg1) {
   const handle1 = arg0;
   const rsc0 = handleTable3.get(handle1).rep;
   let ret;
@@ -1057,9 +1052,9 @@ function trampoline16(arg0, arg1) {
   }
 }
 
-function trampoline17(arg0, arg1) {
+function trampoline14(arg0, arg1) {
   const handle1 = arg0;
-  const rsc0 = handleTable1.get(handle1).rep;
+  const rsc0 = handleTable0.get(handle1).rep;
   const ret = filesystemErrorCode(rsc0);
   const variant3 = ret;
   if (variant3 === null || variant3=== undefined) {
@@ -1230,9 +1225,9 @@ function trampoline17(arg0, arg1) {
   }
 }
 
-function trampoline18(arg0, arg1) {
+function trampoline15(arg0, arg1) {
   const handle1 = arg0;
-  const rsc0 = handleTable0.get(handle1).rep;
+  const rsc0 = handleTable1.get(handle1).rep;
   let ret;
   try {
     ret = { tag: 'ok', val: OutputStream.prototype.checkWrite.call(rsc0) };
@@ -1258,8 +1253,8 @@ function trampoline18(arg0, arg1) {
           if (!(e instanceof Error$1)) {
             throw new Error('Not a valid "Error" resource.');
           }
-          const handle2 = handleCnt1++;
-          handleTable1.set(handle2, { rep: e, own: true });
+          const handle2 = handleCnt0++;
+          handleTable0.set(handle2, { rep: e, own: true });
           dataView(memory0).setInt32(arg1 + 12, handle2, true);
           break;
         }
@@ -1279,9 +1274,9 @@ function trampoline18(arg0, arg1) {
   }
 }
 
-function trampoline19(arg0, arg1, arg2, arg3) {
+function trampoline16(arg0, arg1, arg2, arg3) {
   const handle1 = arg0;
-  const rsc0 = handleTable0.get(handle1).rep;
+  const rsc0 = handleTable1.get(handle1).rep;
   const ptr2 = arg1;
   const len2 = arg2;
   const result2 = new Uint8Array(memory0.buffer.slice(ptr2, ptr2 + len2 * 1));
@@ -1309,8 +1304,8 @@ function trampoline19(arg0, arg1, arg2, arg3) {
           if (!(e instanceof Error$1)) {
             throw new Error('Not a valid "Error" resource.');
           }
-          const handle3 = handleCnt1++;
-          handleTable1.set(handle3, { rep: e, own: true });
+          const handle3 = handleCnt0++;
+          handleTable0.set(handle3, { rep: e, own: true });
           dataView(memory0).setInt32(arg3 + 8, handle3, true);
           break;
         }
@@ -1330,9 +1325,9 @@ function trampoline19(arg0, arg1, arg2, arg3) {
   }
 }
 
-function trampoline20(arg0, arg1, arg2, arg3) {
+function trampoline17(arg0, arg1, arg2, arg3) {
   const handle1 = arg0;
-  const rsc0 = handleTable0.get(handle1).rep;
+  const rsc0 = handleTable1.get(handle1).rep;
   const ptr2 = arg1;
   const len2 = arg2;
   const result2 = new Uint8Array(memory0.buffer.slice(ptr2, ptr2 + len2 * 1));
@@ -1360,8 +1355,8 @@ function trampoline20(arg0, arg1, arg2, arg3) {
           if (!(e instanceof Error$1)) {
             throw new Error('Not a valid "Error" resource.');
           }
-          const handle3 = handleCnt1++;
-          handleTable1.set(handle3, { rep: e, own: true });
+          const handle3 = handleCnt0++;
+          handleTable0.set(handle3, { rep: e, own: true });
           dataView(memory0).setInt32(arg3 + 8, handle3, true);
           break;
         }
@@ -1381,9 +1376,9 @@ function trampoline20(arg0, arg1, arg2, arg3) {
   }
 }
 
-function trampoline21(arg0, arg1) {
+function trampoline18(arg0, arg1) {
   const handle1 = arg0;
-  const rsc0 = handleTable0.get(handle1).rep;
+  const rsc0 = handleTable1.get(handle1).rep;
   let ret;
   try {
     ret = { tag: 'ok', val: OutputStream.prototype.blockingFlush.call(rsc0) };
@@ -1408,8 +1403,8 @@ function trampoline21(arg0, arg1) {
           if (!(e instanceof Error$1)) {
             throw new Error('Not a valid "Error" resource.');
           }
-          const handle2 = handleCnt1++;
-          handleTable1.set(handle2, { rep: e, own: true });
+          const handle2 = handleCnt0++;
+          handleTable0.set(handle2, { rep: e, own: true });
           dataView(memory0).setInt32(arg1 + 8, handle2, true);
           break;
         }
@@ -1429,7 +1424,7 @@ function trampoline21(arg0, arg1) {
   }
 }
 
-function trampoline22(arg0, arg1) {
+function trampoline19(arg0, arg1) {
   const ret = getRandomBytes(BigInt.asUintN(64, arg0));
   const val0 = ret;
   const len0 = val0.byteLength;
@@ -1440,7 +1435,7 @@ function trampoline22(arg0, arg1) {
   dataView(memory0).setInt32(arg1 + 0, ptr0, true);
 }
 
-function trampoline23(arg0) {
+function trampoline20(arg0) {
   const ret = getEnvironment();
   const vec3 = ret;
   const len3 = vec3.length;
@@ -1460,57 +1455,6 @@ function trampoline23(arg0) {
   dataView(memory0).setInt32(arg0 + 4, len3, true);
   dataView(memory0).setInt32(arg0 + 0, result3, true);
 }
-
-function trampoline24(arg0) {
-  const ret = getTerminalStdin();
-  const variant1 = ret;
-  if (variant1 === null || variant1=== undefined) {
-    dataView(memory0).setInt8(arg0 + 0, 0, true);
-  } else {
-    const e = variant1;
-    dataView(memory0).setInt8(arg0 + 0, 1, true);
-    if (!(e instanceof TerminalInput)) {
-      throw new Error('Not a valid "TerminalInput" resource.');
-    }
-    const handle0 = handleCnt6++;
-    handleTable6.set(handle0, { rep: e, own: true });
-    dataView(memory0).setInt32(arg0 + 4, handle0, true);
-  }
-}
-
-function trampoline25(arg0) {
-  const ret = getTerminalStdout();
-  const variant1 = ret;
-  if (variant1 === null || variant1=== undefined) {
-    dataView(memory0).setInt8(arg0 + 0, 0, true);
-  } else {
-    const e = variant1;
-    dataView(memory0).setInt8(arg0 + 0, 1, true);
-    if (!(e instanceof TerminalOutput)) {
-      throw new Error('Not a valid "TerminalOutput" resource.');
-    }
-    const handle0 = handleCnt7++;
-    handleTable7.set(handle0, { rep: e, own: true });
-    dataView(memory0).setInt32(arg0 + 4, handle0, true);
-  }
-}
-
-function trampoline26(arg0) {
-  const ret = getTerminalStderr();
-  const variant1 = ret;
-  if (variant1 === null || variant1=== undefined) {
-    dataView(memory0).setInt8(arg0 + 0, 0, true);
-  } else {
-    const e = variant1;
-    dataView(memory0).setInt8(arg0 + 0, 1, true);
-    if (!(e instanceof TerminalOutput)) {
-      throw new Error('Not a valid "TerminalOutput" resource.');
-    }
-    const handle0 = handleCnt7++;
-    handleTable7.set(handle0, { rep: e, own: true });
-    dataView(memory0).setInt32(arg0 + 4, handle0, true);
-  }
-}
 let exports3;
 let realloc1;
 let postReturn0;
@@ -1526,14 +1470,14 @@ function trampoline0(handle) {
     handleEntry.rep[symbolDispose]();
   }
 }
-const handleTable1= new Map();
-let handleCnt1 = 0;
+const handleTable0= new Map();
+let handleCnt0 = 0;
 function trampoline1(handle) {
-  const handleEntry = handleTable1.get(handle);
+  const handleEntry = handleTable0.get(handle);
   if (!handleEntry) {
     throw new Error(`Resource error: Invalid handle ${handle}`);
   }
-  handleTable1.delete(handle);
+  handleTable0.delete(handle);
   if (handleEntry.own && handleEntry.rep[symbolDispose]) {
     handleEntry.rep[symbolDispose]();
   }
@@ -1550,14 +1494,14 @@ function trampoline2(handle) {
     handleEntry.rep[symbolDispose]();
   }
 }
-const handleTable0= new Map();
-let handleCnt0 = 0;
+const handleTable1= new Map();
+let handleCnt1 = 0;
 function trampoline3(handle) {
-  const handleEntry = handleTable0.get(handle);
+  const handleEntry = handleTable1.get(handle);
   if (!handleEntry) {
     throw new Error(`Resource error: Invalid handle ${handle}`);
   }
-  handleTable0.delete(handle);
+  handleTable1.delete(handle);
   if (handleEntry.own && handleEntry.rep[symbolDispose]) {
     handleEntry.rep[symbolDispose]();
   }
@@ -1570,42 +1514,6 @@ function trampoline4(handle) {
     throw new Error(`Resource error: Invalid handle ${handle}`);
   }
   handleTable3.delete(handle);
-  if (handleEntry.own && handleEntry.rep[symbolDispose]) {
-    handleEntry.rep[symbolDispose]();
-  }
-}
-const handleTable6= new Map();
-let handleCnt6 = 0;
-function trampoline5(handle) {
-  const handleEntry = handleTable6.get(handle);
-  if (!handleEntry) {
-    throw new Error(`Resource error: Invalid handle ${handle}`);
-  }
-  handleTable6.delete(handle);
-  if (handleEntry.own && handleEntry.rep[symbolDispose]) {
-    handleEntry.rep[symbolDispose]();
-  }
-}
-const handleTable7= new Map();
-let handleCnt7 = 0;
-function trampoline6(handle) {
-  const handleEntry = handleTable7.get(handle);
-  if (!handleEntry) {
-    throw new Error(`Resource error: Invalid handle ${handle}`);
-  }
-  handleTable7.delete(handle);
-  if (handleEntry.own && handleEntry.rep[symbolDispose]) {
-    handleEntry.rep[symbolDispose]();
-  }
-}
-const handleTable5= new Map();
-let handleCnt5 = 0;
-function trampoline7(handle) {
-  const handleEntry = handleTable5.get(handle);
-  if (!handleEntry) {
-    throw new Error(`Resource error: Invalid handle ${handle}`);
-  }
-  handleTable5.delete(handle);
   if (handleEntry.own && handleEntry.rep[symbolDispose]) {
     handleEntry.rep[symbolDispose]();
   }
@@ -1720,22 +1628,22 @@ function diff(arg0, arg1, arg2) {
 const $init = (async() => {
   const module0 = fetchCompile(new URL('./index.core.wasm', import.meta.url));
   const module1 = fetchCompile(new URL('./index.core2.wasm', import.meta.url));
-  const module2 = base64Compile('AGFzbQEAAAABQgtgAX8AYAN/fn8AYAJ/fwBgBH9/f38AYAJ+fwBgBH9/f38Bf2ACf38Bf2ABfwF/YAN/f38Bf2AEf35/fwF/YAF/AAMZGAABAgICAgIDAwIEAAAAAAUGBgYHBggJCgQFAXABGBgHehkBMAAAATEAAQEyAAIBMwADATQABAE1AAUBNgAGATcABwE4AAgBOQAJAjEwAAoCMTEACwIxMgAMAjEzAA0CMTQADgIxNQAPAjE2ABACMTcAEQIxOAASAjE5ABMCMjAAFAIyMQAVAjIyABYCMjMAFwgkaW1wb3J0cwEACqcCGAkAIABBABEAAAsNACAAIAEgAkEBEQEACwsAIAAgAUECEQIACwsAIAAgAUEDEQIACwsAIAAgAUEEEQIACwsAIAAgAUEFEQIACwsAIAAgAUEGEQIACw8AIAAgASACIANBBxEDAAsPACAAIAEgAiADQQgRAwALCwAgACABQQkRAgALCwAgACABQQoRBAALCQAgAEELEQAACwkAIABBDBEAAAsJACAAQQ0RAAALCQAgAEEOEQAACw8AIAAgASACIANBDxEFAAsLACAAIAFBEBEGAAsLACAAIAFBEREGAAsLACAAIAFBEhEGAAsJACAAQRMRBwALCwAgACABQRQRBgALDQAgACABIAJBFREIAAsPACAAIAEgAiADQRYRCQALCQAgAEEXEQoACwAuCXByb2R1Y2VycwEMcHJvY2Vzc2VkLWJ5AQ13aXQtY29tcG9uZW50BjAuMTguMQCoDARuYW1lABMSd2l0LWNvbXBvbmVudDpzaGltAYsMGABFaW5kaXJlY3Qtd2FzaTpmaWxlc3lzdGVtL3ByZW9wZW5zQDAuMi4wLXJjLTIwMjMtMTAtMTgtZ2V0LWRpcmVjdG9yaWVzAVZpbmRpcmVjdC13YXNpOmZpbGVzeXN0ZW0vdHlwZXNAMC4yLjAtcmMtMjAyMy0xMC0xOC1bbWV0aG9kXWRlc2NyaXB0b3Iud3JpdGUtdmlhLXN0cmVhbQJXaW5kaXJlY3Qtd2FzaTpmaWxlc3lzdGVtL3R5cGVzQDAuMi4wLXJjLTIwMjMtMTAtMTgtW21ldGhvZF1kZXNjcmlwdG9yLmFwcGVuZC12aWEtc3RyZWFtA05pbmRpcmVjdC13YXNpOmZpbGVzeXN0ZW0vdHlwZXNAMC4yLjAtcmMtMjAyMy0xMC0xOC1bbWV0aG9kXWRlc2NyaXB0b3IuZ2V0LXR5cGUESmluZGlyZWN0LXdhc2k6ZmlsZXN5c3RlbS90eXBlc0AwLjIuMC1yYy0yMDIzLTEwLTE4LVttZXRob2RdZGVzY3JpcHRvci5zdGF0BUhpbmRpcmVjdC13YXNpOmZpbGVzeXN0ZW0vdHlwZXNAMC4yLjAtcmMtMjAyMy0xMC0xOC1maWxlc3lzdGVtLWVycm9yLWNvZGUGTmluZGlyZWN0LXdhc2k6aW8vc3RyZWFtc0AwLjIuMC1yYy0yMDIzLTEwLTE4LVttZXRob2Rdb3V0cHV0LXN0cmVhbS5jaGVjay13cml0ZQdIaW5kaXJlY3Qtd2FzaTppby9zdHJlYW1zQDAuMi4wLXJjLTIwMjMtMTAtMTgtW21ldGhvZF1vdXRwdXQtc3RyZWFtLndyaXRlCFtpbmRpcmVjdC13YXNpOmlvL3N0cmVhbXNAMC4yLjAtcmMtMjAyMy0xMC0xOC1bbWV0aG9kXW91dHB1dC1zdHJlYW0uYmxvY2tpbmctd3JpdGUtYW5kLWZsdXNoCVFpbmRpcmVjdC13YXNpOmlvL3N0cmVhbXNAMC4yLjAtcmMtMjAyMy0xMC0xOC1bbWV0aG9kXW91dHB1dC1zdHJlYW0uYmxvY2tpbmctZmx1c2gKQGluZGlyZWN0LXdhc2k6cmFuZG9tL3JhbmRvbUAwLjIuMC1yYy0yMDIzLTEwLTE4LWdldC1yYW5kb20tYnl0ZXMLQWluZGlyZWN0LXdhc2k6Y2xpL2Vudmlyb25tZW50QDAuMi4wLXJjLTIwMjMtMTAtMTgtZ2V0LWVudmlyb25tZW50DEdpbmRpcmVjdC13YXNpOmNsaS90ZXJtaW5hbC1zdGRpbkAwLjIuMC1yYy0yMDIzLTEwLTE4LWdldC10ZXJtaW5hbC1zdGRpbg1JaW5kaXJlY3Qtd2FzaTpjbGkvdGVybWluYWwtc3Rkb3V0QDAuMi4wLXJjLTIwMjMtMTAtMTgtZ2V0LXRlcm1pbmFsLXN0ZG91dA5JaW5kaXJlY3Qtd2FzaTpjbGkvdGVybWluYWwtc3RkZXJyQDAuMi4wLXJjLTIwMjMtMTAtMTgtZ2V0LXRlcm1pbmFsLXN0ZGVycg8lYWRhcHQtd2FzaV9zbmFwc2hvdF9wcmV2aWV3MS1mZF93cml0ZRAnYWRhcHQtd2FzaV9zbmFwc2hvdF9wcmV2aWV3MS1yYW5kb21fZ2V0EShhZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLWVudmlyb25fZ2V0Ei5hZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLWVudmlyb25fc2l6ZXNfZ2V0EyVhZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLWZkX2Nsb3NlFCthZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLWZkX3ByZXN0YXRfZ2V0FTBhZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLWZkX3ByZXN0YXRfZGlyX25hbWUWJGFkYXB0LXdhc2lfc25hcHNob3RfcHJldmlldzEtZmRfc2VlaxcmYWRhcHQtd2FzaV9zbmFwc2hvdF9wcmV2aWV3MS1wcm9jX2V4aXQ');
-  const module3 = base64Compile('AGFzbQEAAAABQgtgAX8AYAN/fn8AYAJ/fwBgBH9/f38AYAJ+fwBgBH9/f38Bf2ACf38Bf2ABfwF/YAN/f38Bf2AEf35/fwF/YAF/AAKWARkAATAAAAABMQABAAEyAAIAATMAAgABNAACAAE1AAIAATYAAgABNwADAAE4AAMAATkAAgACMTAABAACMTEAAAACMTIAAAACMTMAAAACMTQAAAACMTUABQACMTYABgACMTcABgACMTgABgACMTkABwACMjAABgACMjEACAACMjIACQACMjMACgAIJGltcG9ydHMBcAEYGAkeAQBBAAsYAAECAwQFBgcICQoLDA0ODxAREhMUFRYXAC4JcHJvZHVjZXJzAQxwcm9jZXNzZWQtYnkBDXdpdC1jb21wb25lbnQGMC4xOC4xABwEbmFtZQAVFHdpdC1jb21wb25lbnQ6Zml4dXBz');
+  const module2 = base64Compile('AGFzbQEAAAABQgtgAX8AYAN/fn8AYAJ/fwBgBH9/f38AYAJ+fwBgBH9/f38Bf2ACf38Bf2ABfwF/YAN/f38Bf2AEf35/fwF/YAF/AAMWFQABAgICAgIDAwIEAAUGBgYHBggJCgQFAXABFRUHaxYBMAAAATEAAQEyAAIBMwADATQABAE1AAUBNgAGATcABwE4AAgBOQAJAjEwAAoCMTEACwIxMgAMAjEzAA0CMTQADgIxNQAPAjE2ABACMTcAEQIxOAASAjE5ABMCMjAAFAgkaW1wb3J0cwEACokCFQkAIABBABEAAAsNACAAIAEgAkEBEQEACwsAIAAgAUECEQIACwsAIAAgAUEDEQIACwsAIAAgAUEEEQIACwsAIAAgAUEFEQIACwsAIAAgAUEGEQIACw8AIAAgASACIANBBxEDAAsPACAAIAEgAiADQQgRAwALCwAgACABQQkRAgALCwAgACABQQoRBAALCQAgAEELEQAACw8AIAAgASACIANBDBEFAAsLACAAIAFBDREGAAsLACAAIAFBDhEGAAsLACAAIAFBDxEGAAsJACAAQRARBwALCwAgACABQRERBgALDQAgACABIAJBEhEIAAsPACAAIAEgAiADQRMRCQALCQAgAEEUEQoACwAuCXByb2R1Y2VycwEMcHJvY2Vzc2VkLWJ5AQ13aXQtY29tcG9uZW50BjAuMTguMgDJCgRuYW1lABMSd2l0LWNvbXBvbmVudDpzaGltAawKFQBFaW5kaXJlY3Qtd2FzaTpmaWxlc3lzdGVtL3ByZW9wZW5zQDAuMi4wLXJjLTIwMjMtMTEtMTAtZ2V0LWRpcmVjdG9yaWVzAVZpbmRpcmVjdC13YXNpOmZpbGVzeXN0ZW0vdHlwZXNAMC4yLjAtcmMtMjAyMy0xMS0xMC1bbWV0aG9kXWRlc2NyaXB0b3Iud3JpdGUtdmlhLXN0cmVhbQJXaW5kaXJlY3Qtd2FzaTpmaWxlc3lzdGVtL3R5cGVzQDAuMi4wLXJjLTIwMjMtMTEtMTAtW21ldGhvZF1kZXNjcmlwdG9yLmFwcGVuZC12aWEtc3RyZWFtA05pbmRpcmVjdC13YXNpOmZpbGVzeXN0ZW0vdHlwZXNAMC4yLjAtcmMtMjAyMy0xMS0xMC1bbWV0aG9kXWRlc2NyaXB0b3IuZ2V0LXR5cGUESmluZGlyZWN0LXdhc2k6ZmlsZXN5c3RlbS90eXBlc0AwLjIuMC1yYy0yMDIzLTExLTEwLVttZXRob2RdZGVzY3JpcHRvci5zdGF0BUhpbmRpcmVjdC13YXNpOmZpbGVzeXN0ZW0vdHlwZXNAMC4yLjAtcmMtMjAyMy0xMS0xMC1maWxlc3lzdGVtLWVycm9yLWNvZGUGTmluZGlyZWN0LXdhc2k6aW8vc3RyZWFtc0AwLjIuMC1yYy0yMDIzLTExLTEwLVttZXRob2Rdb3V0cHV0LXN0cmVhbS5jaGVjay13cml0ZQdIaW5kaXJlY3Qtd2FzaTppby9zdHJlYW1zQDAuMi4wLXJjLTIwMjMtMTEtMTAtW21ldGhvZF1vdXRwdXQtc3RyZWFtLndyaXRlCFtpbmRpcmVjdC13YXNpOmlvL3N0cmVhbXNAMC4yLjAtcmMtMjAyMy0xMS0xMC1bbWV0aG9kXW91dHB1dC1zdHJlYW0uYmxvY2tpbmctd3JpdGUtYW5kLWZsdXNoCVFpbmRpcmVjdC13YXNpOmlvL3N0cmVhbXNAMC4yLjAtcmMtMjAyMy0xMS0xMC1bbWV0aG9kXW91dHB1dC1zdHJlYW0uYmxvY2tpbmctZmx1c2gKQGluZGlyZWN0LXdhc2k6cmFuZG9tL3JhbmRvbUAwLjIuMC1yYy0yMDIzLTExLTEwLWdldC1yYW5kb20tYnl0ZXMLQWluZGlyZWN0LXdhc2k6Y2xpL2Vudmlyb25tZW50QDAuMi4wLXJjLTIwMjMtMTEtMTAtZ2V0LWVudmlyb25tZW50DCVhZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLWZkX3dyaXRlDSdhZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLXJhbmRvbV9nZXQOKGFkYXB0LXdhc2lfc25hcHNob3RfcHJldmlldzEtZW52aXJvbl9nZXQPLmFkYXB0LXdhc2lfc25hcHNob3RfcHJldmlldzEtZW52aXJvbl9zaXplc19nZXQQJWFkYXB0LXdhc2lfc25hcHNob3RfcHJldmlldzEtZmRfY2xvc2URK2FkYXB0LXdhc2lfc25hcHNob3RfcHJldmlldzEtZmRfcHJlc3RhdF9nZXQSMGFkYXB0LXdhc2lfc25hcHNob3RfcHJldmlldzEtZmRfcHJlc3RhdF9kaXJfbmFtZRMkYWRhcHQtd2FzaV9zbmFwc2hvdF9wcmV2aWV3MS1mZF9zZWVrFCZhZGFwdC13YXNpX3NuYXBzaG90X3ByZXZpZXcxLXByb2NfZXhpdA');
+  const module3 = base64Compile('AGFzbQEAAAABQgtgAX8AYAN/fn8AYAJ/fwBgBH9/f38AYAJ+fwBgBH9/f38Bf2ACf38Bf2ABfwF/YAN/f38Bf2AEf35/fwF/YAF/AAKEARYAATAAAAABMQABAAEyAAIAATMAAgABNAACAAE1AAIAATYAAgABNwADAAE4AAMAATkAAgACMTAABAACMTEAAAACMTIABQACMTMABgACMTQABgACMTUABgACMTYABwACMTcABgACMTgACAACMTkACQACMjAACgAIJGltcG9ydHMBcAEVFQkbAQBBAAsVAAECAwQFBgcICQoLDA0ODxAREhMUAC4JcHJvZHVjZXJzAQxwcm9jZXNzZWQtYnkBDXdpdC1jb21wb25lbnQGMC4xOC4yABwEbmFtZQAVFHdpdC1jb21wb25lbnQ6Zml4dXBz');
   const instanceFlags0 = new WebAssembly.Global({ value: "i32", mutable: true }, 3);
   Promise.all([module0, module1, module2, module3]).catch(() => {});
   ({ exports: exports0 } = await instantiateCore(await module2));
   ({ exports: exports1 } = await instantiateCore(await module0, {
     wasi_snapshot_preview1: {
-      environ_get: exports0['17'],
-      environ_sizes_get: exports0['18'],
-      fd_close: exports0['19'],
-      fd_prestat_dir_name: exports0['21'],
-      fd_prestat_get: exports0['20'],
-      fd_seek: exports0['22'],
-      fd_write: exports0['15'],
-      proc_exit: exports0['23'],
-      random_get: exports0['16'],
+      environ_get: exports0['14'],
+      environ_sizes_get: exports0['15'],
+      fd_close: exports0['16'],
+      fd_prestat_dir_name: exports0['18'],
+      fd_prestat_get: exports0['17'],
+      fd_seek: exports0['19'],
+      fd_write: exports0['12'],
+      proc_exit: exports0['20'],
+      random_get: exports0['13'],
     },
   }));
   ({ exports: exports2 } = await instantiateCore(await module1, {
@@ -1745,40 +1653,25 @@ const $init = (async() => {
     env: {
       memory: exports1.memory,
     },
-    'wasi:cli/environment@0.2.0-rc-2023-10-18': {
+    'wasi:cli/environment@0.2.0-rc-2023-11-10': {
       'get-environment': exports0['11'],
     },
-    'wasi:cli/exit@0.2.0-rc-2023-10-18': {
-      exit: trampoline9,
+    'wasi:cli/exit@0.2.0-rc-2023-11-10': {
+      exit: trampoline6,
     },
-    'wasi:cli/stderr@0.2.0-rc-2023-10-18': {
-      'get-stderr': trampoline8,
+    'wasi:cli/stderr@0.2.0-rc-2023-11-10': {
+      'get-stderr': trampoline5,
     },
-    'wasi:cli/stdin@0.2.0-rc-2023-10-18': {
-      'get-stdin': trampoline10,
+    'wasi:cli/stdin@0.2.0-rc-2023-11-10': {
+      'get-stdin': trampoline7,
     },
-    'wasi:cli/stdout@0.2.0-rc-2023-10-18': {
-      'get-stdout': trampoline11,
+    'wasi:cli/stdout@0.2.0-rc-2023-11-10': {
+      'get-stdout': trampoline8,
     },
-    'wasi:cli/terminal-input@0.2.0-rc-2023-10-18': {
-      '[resource-drop]terminal-input': trampoline5,
-    },
-    'wasi:cli/terminal-output@0.2.0-rc-2023-10-18': {
-      '[resource-drop]terminal-output': trampoline6,
-    },
-    'wasi:cli/terminal-stderr@0.2.0-rc-2023-10-18': {
-      'get-terminal-stderr': exports0['14'],
-    },
-    'wasi:cli/terminal-stdin@0.2.0-rc-2023-10-18': {
-      'get-terminal-stdin': exports0['12'],
-    },
-    'wasi:cli/terminal-stdout@0.2.0-rc-2023-10-18': {
-      'get-terminal-stdout': exports0['13'],
-    },
-    'wasi:filesystem/preopens@0.2.0-rc-2023-10-18': {
+    'wasi:filesystem/preopens@0.2.0-rc-2023-11-10': {
       'get-directories': exports0['0'],
     },
-    'wasi:filesystem/types@0.2.0-rc-2023-10-18': {
+    'wasi:filesystem/types@0.2.0-rc-2023-11-10': {
       '[method]descriptor.append-via-stream': exports0['2'],
       '[method]descriptor.get-type': exports0['3'],
       '[method]descriptor.stat': exports0['4'],
@@ -1787,20 +1680,19 @@ const $init = (async() => {
       '[resource-drop]directory-entry-stream': trampoline0,
       'filesystem-error-code': exports0['5'],
     },
-    'wasi:io/streams@0.2.0-rc-2023-10-18': {
+    'wasi:io/error@0.2.0-rc-2023-11-10': {
+      '[resource-drop]error': trampoline1,
+    },
+    'wasi:io/streams@0.2.0-rc-2023-11-10': {
       '[method]output-stream.blocking-flush': exports0['9'],
       '[method]output-stream.blocking-write-and-flush': exports0['8'],
       '[method]output-stream.check-write': exports0['6'],
       '[method]output-stream.write': exports0['7'],
-      '[resource-drop]error': trampoline1,
       '[resource-drop]input-stream': trampoline2,
       '[resource-drop]output-stream': trampoline3,
     },
-    'wasi:random/random@0.2.0-rc-2023-10-18': {
+    'wasi:random/random@0.2.0-rc-2023-11-10': {
       'get-random-bytes': exports0['10'],
-    },
-    'wasi:sockets/tcp@0.2.0-rc-2023-10-18': {
-      '[resource-drop]tcp-socket': trampoline7,
     },
   }));
   memory0 = exports1.memory;
@@ -1808,30 +1700,27 @@ const $init = (async() => {
   ({ exports: exports3 } = await instantiateCore(await module3, {
     '': {
       $imports: exports0.$imports,
-      '0': trampoline12,
-      '1': trampoline13,
-      '10': trampoline22,
-      '11': trampoline23,
-      '12': trampoline24,
-      '13': trampoline25,
-      '14': trampoline26,
-      '15': exports2.fd_write,
-      '16': exports2.random_get,
-      '17': exports2.environ_get,
-      '18': exports2.environ_sizes_get,
-      '19': exports2.fd_close,
-      '2': trampoline14,
-      '20': exports2.fd_prestat_get,
-      '21': exports2.fd_prestat_dir_name,
-      '22': exports2.fd_seek,
-      '23': exports2.proc_exit,
-      '3': trampoline15,
-      '4': trampoline16,
-      '5': trampoline17,
-      '6': trampoline18,
-      '7': trampoline19,
-      '8': trampoline20,
-      '9': trampoline21,
+      '0': trampoline9,
+      '1': trampoline10,
+      '10': trampoline19,
+      '11': trampoline20,
+      '12': exports2.fd_write,
+      '13': exports2.random_get,
+      '14': exports2.environ_get,
+      '15': exports2.environ_sizes_get,
+      '16': exports2.fd_close,
+      '17': exports2.fd_prestat_get,
+      '18': exports2.fd_prestat_dir_name,
+      '19': exports2.fd_seek,
+      '2': trampoline11,
+      '20': exports2.proc_exit,
+      '3': trampoline12,
+      '4': trampoline13,
+      '5': trampoline14,
+      '6': trampoline15,
+      '7': trampoline16,
+      '8': trampoline17,
+      '9': trampoline18,
     },
   }));
   realloc1 = exports1.cabi_realloc;
