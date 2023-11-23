@@ -118,12 +118,12 @@ export interface DescriptorStat {
 import type { Error } from '../interfaces/wasi-io-streams.js';
 export { Error };
 
-export class DirectoryEntryStream {
-}
-
 export class Descriptor {
   writeViaStream(offset: Filesize): OutputStream;
   appendViaStream(): OutputStream;
   getType(): DescriptorType;
   stat(): DescriptorStat;
+}
+
+export class DirectoryEntryStream {
 }
