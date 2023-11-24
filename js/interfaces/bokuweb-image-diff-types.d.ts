@@ -10,16 +10,12 @@ export interface Output {
   width: number,
   height: number,
 }
-export type Error = ErrorDecode | ErrorEncode | ErrorImageLength;
+export type Error = ErrorDecode | ErrorEncode;
 export interface ErrorDecode {
   tag: 'decode',
   val: string,
 }
 export interface ErrorEncode {
   tag: 'encode',
-  val: string,
-}
-export interface ErrorImageLength {
-  tag: 'image-length',
   val: string,
 }
