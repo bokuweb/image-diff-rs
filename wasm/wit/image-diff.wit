@@ -16,7 +16,6 @@ interface types {
   variant error {
     decode(string),
     encode(string),
-    image-length(string),
   }
 }
 
