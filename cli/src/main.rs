@@ -23,7 +23,7 @@ impl<P: AsRef<Path> + Clone> DiffFilesInput<P> {
 
 pub fn main() {}
 
-fn diff_files<P: AsRef<Path> + Clone>(
+pub fn diff_files<P: AsRef<Path> + Clone>(
     input: DiffFilesInput<P>,
 ) -> Result<image_diff_rs::DiffOutput, image_diff_rs::ImageDiffError> {
     use std::{fs::File, io::Write};
