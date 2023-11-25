@@ -12,9 +12,6 @@ export interface StreamErrorClosed {
   tag: 'closed',
 }
 
-export class Error {
-}
-
 export class InputStream {
 }
 
@@ -23,4 +20,7 @@ export class OutputStream {
   write(contents: Uint8Array): void;
   blockingWriteAndFlush(contents: Uint8Array): void;
   blockingFlush(): void;
+}
+
+export class Error {
 }

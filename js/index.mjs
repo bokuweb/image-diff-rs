@@ -1646,13 +1646,13 @@ function diff(arg0, arg1, arg2) {
     variant4_1 = e ? 1 : 0;
   }
   const ret = exports1.diff(ptr0, len0, ptr1, len1, variant3_0, variant3_1, variant4_0, variant4_1);
-  let variant10;
+  let variant9;
   switch (dataView(memory0).getUint8(ret + 0, true)) {
     case 0: {
       const ptr5 = dataView(memory0).getInt32(ret + 8, true);
       const len5 = dataView(memory0).getInt32(ret + 12, true);
       const result5 = new Uint8Array(memory0.buffer.slice(ptr5, ptr5 + len5 * 1));
-      variant10= {
+      variant9= {
         tag: 'ok',
         val: {
           diffCount: dataView(memory0).getInt32(ret + 4, true) >>> 0,
@@ -1664,13 +1664,13 @@ function diff(arg0, arg1, arg2) {
       break;
     }
     case 1: {
-      let variant9;
+      let variant8;
       switch (dataView(memory0).getUint8(ret + 4, true)) {
         case 0: {
           const ptr6 = dataView(memory0).getInt32(ret + 8, true);
           const len6 = dataView(memory0).getInt32(ret + 12, true);
           const result6 = utf8Decoder.decode(new Uint8Array(memory0.buffer, ptr6, len6));
-          variant9= {
+          variant8= {
             tag: 'decode',
             val: result6
           };
@@ -1680,19 +1680,9 @@ function diff(arg0, arg1, arg2) {
           const ptr7 = dataView(memory0).getInt32(ret + 8, true);
           const len7 = dataView(memory0).getInt32(ret + 12, true);
           const result7 = utf8Decoder.decode(new Uint8Array(memory0.buffer, ptr7, len7));
-          variant9= {
+          variant8= {
             tag: 'encode',
             val: result7
-          };
-          break;
-        }
-        case 2: {
-          const ptr8 = dataView(memory0).getInt32(ret + 8, true);
-          const len8 = dataView(memory0).getInt32(ret + 12, true);
-          const result8 = utf8Decoder.decode(new Uint8Array(memory0.buffer, ptr8, len8));
-          variant9= {
-            tag: 'image-length',
-            val: result8
           };
           break;
         }
@@ -1700,9 +1690,9 @@ function diff(arg0, arg1, arg2) {
           throw new TypeError('invalid variant discriminant for Error');
         }
       }
-      variant10= {
+      variant9= {
         tag: 'err',
-        val: variant9
+        val: variant8
       };
       break;
     }
@@ -1711,10 +1701,10 @@ function diff(arg0, arg1, arg2) {
     }
   }
   postReturn0(ret);
-  if (variant10.tag === 'err') {
-    throw new ComponentError(variant10.val);
+  if (variant9.tag === 'err') {
+    throw new ComponentError(variant9.val);
   }
-  return variant10.val;
+  return variant9.val;
 }
 
 const $init = (async() => {

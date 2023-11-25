@@ -9,9 +9,14 @@
   "scripts": {
     "test": "node examples/index.mjs"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [],
   "dependencies": {
     "@bytecodealliance/preview2-shim": "^0.0.21"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@bokuweb/image-diff-wasm": "0.1.0"
+  }
 }
