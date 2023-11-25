@@ -15,7 +15,7 @@ npm install @bokuweb/image-diff-wasm
 
 ```js
 import { readFile } from "node:fs/promises";
-import { diff } from "../index.mjs";
+import { diff } from "@bokuweb/image-diff-wasm";
 
 const imga = await readFile(PATH_TO_IMAGE_A);
 const imgb = await readFile(PATH_TO_IMAGE_B);
