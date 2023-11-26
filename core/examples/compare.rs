@@ -1,10 +1,10 @@
 use image_diff_rs::*;
 
 pub fn main() {
-    let imga = std::fs::read("../fixtures/sample0.webp").unwrap();
-    let imgb = std::fs::read("../fixtures/sample1.webp").unwrap();
+    let imga = std::fs::read("./fixtures/sample0.webp").unwrap();
+    let imgb = std::fs::read("./fixtures/sample1.webp").unwrap();
 
-    let _result = diff(
+    let result = diff(
         imga,
         imgb,
         &DiffOption {
@@ -13,4 +13,5 @@ pub fn main() {
         },
     )
     .unwrap();
+    assert_eq!(result.diff_count, 3454)
 }
