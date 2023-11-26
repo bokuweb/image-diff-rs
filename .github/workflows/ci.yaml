@@ -52,7 +52,7 @@ jobs:
           args: -- -D warnings
 
   example:
-    name: Clippy
+    name: Example
     runs-on: ubuntu-latest
     defaults:
       run:
