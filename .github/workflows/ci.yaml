@@ -8,8 +8,8 @@ jobs:
   node:
     runs-on: ubuntu-20.04
     defaults:
-        run:
-          working-directory: js
+      run:
+        working-directory: js
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@master
@@ -23,8 +23,8 @@ jobs:
   deno:
     runs-on: ubuntu-20.04
     defaults:
-        run:
-          working-directory: js
+      run:
+        working-directory: js
     steps:
       - uses: actions/checkout@master
       - uses: denoland/setup-deno@v1
@@ -50,3 +50,24 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
+
+  example:
+    name: Clippy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: core
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.74.0
+          override: true
+      - run: rustup component add clippy
+      - uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --example compare
