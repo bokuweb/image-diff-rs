@@ -14,11 +14,6 @@ impl From<ImageDiffError> for bokuweb::image_diff::types::Error {
         match value {
             ImageDiffError::Decode(s) => bokuweb::image_diff::types::Error::Decode(s),
             ImageDiffError::Encode(s) => bokuweb::image_diff::types::Error::Encode(s),
-            ImageDiffError::InputExtension(_)
-            | ImageDiffError::Image(_)
-            | ImageDiffError::File(_) => {
-                unreachable!()
-            }
         }
     }
 }
