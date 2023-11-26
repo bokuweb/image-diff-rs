@@ -118,6 +118,7 @@ fn main() {
         .file("../libwebp/sharpyuv/sharpyuv.c")
         .file("../libwebp/sharpyuv/sharpyuv_neon.c")
         .file("../libwebp/sharpyuv/sharpyuv_cpu.c")
+        .file("../libwebp/sharpyuv/sharpyuv_sse2.c")
         .include("../libwebp")
         .compile("webp");
 }
