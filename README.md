@@ -10,6 +10,11 @@ The code for `Node.js` and `Deno` is generated using `wit-bindgen` and `jco`.
 - Wasm: https://github.com/bokuweb/image-diff-rs/tree/main/wasm
 - Rust: https://github.com/bokuweb/image-diff-rs/tree/main/core
 
+## Demo
+
+| img1     | img2         | diff       |
+| --------------- |---------------| -------------------- |
+| ![](https://github.com/bokuweb/pixelmatch-rs/raw/main/fixtures/001a.png) | ![](https://github.com/bokuweb/pixelmatch-rs/raw/main/fixtures/001b.png) |![](https://github.com/bokuweb/pixelmatch-rs/raw/main/assets/diff1.png)|
 
 ## Generate JS code from wasm component.
 
