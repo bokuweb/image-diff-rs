@@ -29,6 +29,10 @@ pub fn main() {
 }
 ```
 
+``` sh
+cargo run --example compare
+```
+
 ## Demo
 
 | img1     | img2         | diff       |
