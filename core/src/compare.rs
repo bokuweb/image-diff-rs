@@ -4,11 +4,19 @@ use pixelmatch::*;
 
 use super::*;
 
+/// The output produced by the `diff` function.
+///
+/// Contains detailed information about the differences between two images.
+///
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct DiffOutput {
+    /// The total number of pixels that differ between the two images.
     pub diff_count: usize,
+    /// A `Vec<u8>` containing the diff image data.
     pub diff_image: Vec<u8>,
+    /// The width of the diff image.
     pub width: u32,
+    /// The height of the diff image.
     pub height: u32,
 }
 
@@ -33,20 +41,20 @@ impl<P: AsRef<Path>> CompareInput<P> {
     }
 }
 
-pub fn compare<P: AsRef<Path>>(input: &CompareInput<P>) -> Result<DiffOutput, ImageDiffError> {
-    let decoded1 = decode(input.actual_filename.as_ref())?;
-    let decoded2 = decode(input.expected_filename.as_ref())?;
-
-    compare_buf(
-        &decoded1.buf,
-        &decoded2.buf,
-        decoded1.dimensions,
-        CompareOption {
-            threshold: input.threshold.unwrap_or_default(),
-            enable_anti_alias: input.include_anti_alias.unwrap_or_default(),
-        },
-    )
-}
+// pub fn compare<P: AsRef<Path>>(input: &CompareInput<P>) -> Result<DiffOutput, ImageDiffError> {
+//     let decoded1 = decode(input.actual_filename.as_ref())?;
+//     let decoded2 = decode(input.expected_filename.as_ref())?;
+//
+//     compare_buf(
+//         &decoded1.buf,
+//         &decoded2.buf,
+//         decoded1.dimensions,
+//         CompareOption {
+//             threshold: input.threshold.unwrap_or_default(),
+//             enable_anti_alias: input.include_anti_alias.unwrap_or_default(),
+//         },
+//     )
+// }
 
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct CompareOption {

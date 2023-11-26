@@ -11,11 +11,29 @@ pub use encoder::*;
 pub use error::*;
 pub use webp::*;
 
+/// Options for configuring the behavior of the `diff` function.
+///
+/// This struct allows users to set various parameters that influence how the image
+/// difference calculation is performed.
+///
 pub struct DiffOption {
+    /// specifying the sensitivity threshold for pixel differences.
+    /// a lower value means more sensitivity to small changes.
     pub threshold: Option<f32>,
+    /// that determines whether to include anti-aliased pixels in the diff calculation.
     pub include_anti_alias: Option<bool>,
 }
 
+/// Compares two images and calculates the differences between them.
+///
+/// This function takes two images as byte slices and an options struct, and returns
+/// a `Result` containing either the diff output or an error.
+///
+/// # Arguments
+/// * `actual`: A bytes representing the first image to be compared.
+/// * `expected`: A bytes representing the second image to be compared.
+/// * `option`: A reference to a `DiffOption` struct that specifies additional options for the diff operation.
+///
 pub fn diff(
     actual: impl AsRef<[u8]>,
     expected: impl AsRef<[u8]>,
@@ -40,6 +58,7 @@ pub fn diff(
             enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
         },
     )?;
+
     Ok(DiffOutput {
         diff_count: result.diff_count,
         diff_image: encode(&result.diff_image, result.width, result.height)?,
