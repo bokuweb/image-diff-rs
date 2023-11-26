@@ -4,7 +4,11 @@
 
 This project provides an image differencing library that supports `PNG`,`JPEG`,`GIF`,`TIFF`,and `WebP` formats for `Node.js`, `Deno`, and `Rust`. For more details, please refer to each respective directory.
 
-The code for `Node.js` and `Deno` is generated using wit-bindgen and jco.
+The code for `Node.js` and `Deno` is generated using `wit-bindgen` and `jco`.
+
+- JS: https://github.com/bokuweb/image-diff-rs/tree/main/js
+- Rust: https://github.com/bokuweb/image-diff-rs/tree/main/core
+
 
 ## Generate JS code.
 
