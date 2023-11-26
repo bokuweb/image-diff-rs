@@ -2,15 +2,12 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 
+/// Enum representing potential errors that can occur during the image diffing process.
 pub enum ImageDiffError {
-    #[error(transparent)]
-    File(#[from] std::io::Error),
-    #[error("specified input file extension is not supported. this library support `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.png`, `*.tiff`, `*.bmp` files. but got {0}")]
-    InputExtension(String),
+    /// Error that occurs when decoding the input image data fail.s
     #[error("it is not able to decode {0}.")]
     Decode(String),
+    /// Error that occurs when encoding the diff image data fails.
     #[error("it is not able to encode {0}.")]
     Encode(String),
-    #[error(transparent)]
-    Image(#[from] image::ImageError),
 }

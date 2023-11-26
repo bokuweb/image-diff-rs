@@ -47,7 +47,6 @@ fn main() {
         .file("../libwebp/src/dsp/filters_mips_dsp_r2.c")
         .file("../libwebp/src/dsp/lossless.c")
         .file("../libwebp/src/dsp/lossless_mips_dsp_r2.c")
-        .file("../libwebp/src/dsp/lossless_sse41.c")
         .file("../libwebp/src/dsp/rescaler.c")
         .file("../libwebp/src/dsp/rescaler_mips32.c")
         .file("../libwebp/src/dsp/rescaler_mips_dsp_r2.c")
@@ -112,6 +111,13 @@ fn main() {
         .file("../libwebp/src/utils/bit_writer_utils.c")
         .file("../libwebp/src/utils/huffman_encode_utils.c")
         .file("../libwebp/src/utils/quant_levels_utils.c")
+        .file("../libwebp/src/utils/palette.c")
+        .file("../libwebp/sharpyuv/sharpyuv_dsp.c")
+        .file("../libwebp/sharpyuv/sharpyuv_csp.c")
+        .file("../libwebp/sharpyuv/sharpyuv_gamma.c")
+        .file("../libwebp/sharpyuv/sharpyuv.c")
+        .file("../libwebp/sharpyuv/sharpyuv_neon.c")
+        .file("../libwebp/sharpyuv/sharpyuv_cpu.c")
         .include("../libwebp")
         .compile("webp");
 }

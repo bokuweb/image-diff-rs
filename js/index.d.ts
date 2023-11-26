@@ -1,24 +1,21 @@
-import type { Opts } from '../interfaces/bokuweb-image-diff-types.js';
-export { Opts };
-import type { Output } from '../interfaces/bokuweb-image-diff-types.js';
-export { Output };
-import type { Error } from '../interfaces/bokuweb-image-diff-types.js';
-export { Error };
-import { BokuwebImageDiffTypes } from './interfaces/bokuweb-image-diff-types.js';
-import { WasiCliEnvironment } from './interfaces/wasi-cli-environment.js';
-import { WasiCliExit } from './interfaces/wasi-cli-exit.js';
-import { WasiCliStderr } from './interfaces/wasi-cli-stderr.js';
-import { WasiCliStdin } from './interfaces/wasi-cli-stdin.js';
-import { WasiCliStdout } from './interfaces/wasi-cli-stdout.js';
-import { WasiCliTerminalInput } from './interfaces/wasi-cli-terminal-input.js';
-import { WasiCliTerminalOutput } from './interfaces/wasi-cli-terminal-output.js';
-import { WasiCliTerminalStderr } from './interfaces/wasi-cli-terminal-stderr.js';
-import { WasiCliTerminalStdin } from './interfaces/wasi-cli-terminal-stdin.js';
-import { WasiCliTerminalStdout } from './interfaces/wasi-cli-terminal-stdout.js';
-import { WasiClocksWallClock } from './interfaces/wasi-clocks-wall-clock.js';
-import { WasiFilesystemPreopens } from './interfaces/wasi-filesystem-preopens.js';
-import { WasiFilesystemTypes } from './interfaces/wasi-filesystem-types.js';
-import { WasiIoStreams } from './interfaces/wasi-io-streams.js';
-import { WasiRandomRandom } from './interfaces/wasi-random-random.js';
-import { WasiSocketsTcp } from './interfaces/wasi-sockets-tcp.js';
+export interface Opts {
+  threshold?: number;
+  includeAntiAlias?: boolean;
+}
+export interface Output {
+  diffCount: number;
+  diffImage: Uint8Array;
+  width: number;
+  height: number;
+}
+export type Error = ErrorDecode | ErrorEncode;
+export interface ErrorDecode {
+  tag: "decode";
+  val: string;
+}
+export interface ErrorEncode {
+  tag: "encode";
+  val: string;
+}
+
 export function diff(imga: Uint8Array, imgb: Uint8Array, opts: Opts): Output;

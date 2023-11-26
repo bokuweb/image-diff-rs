@@ -1,7 +1,7 @@
-use std::fs::File;
-use std::io::Read;
+// use std::fs::File;
+// use std::io::Read;
 use std::os::raw::*;
-use std::path::Path;
+// use std::path::Path;
 
 use super::*;
 
@@ -47,15 +47,15 @@ pub fn decode_webp_buf(data: &[u8]) -> Result<DecodeOutput, WebPError> {
     })
 }
 
-pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
-    let mut file = File::open(path.as_ref())?;
-    let mut buf = Vec::new();
-    let _ = file.read_to_end(&mut buf)?;
-
-    decode_webp_buf(&buf).map_err(|_| {
-        ImageDiffError::Decode(path.as_ref().to_str().expect("should convert").to_string())
-    })
-}
+// pub(crate) fn decode_webp<P: AsRef<Path>>(path: P) -> Result<DecodeOutput, ImageDiffError> {
+//     let mut file = File::open(path.as_ref())?;
+//     let mut buf = Vec::new();
+//     let _ = file.read_to_end(&mut buf)?;
+//
+//     decode_webp_buf(&buf).map_err(|_| {
+//         ImageDiffError::Decode(path.as_ref().to_str().expect("should convert").to_string())
+//     })
+// }
 
 fn encode_buf(rgba: &[u8], width: u32, height: u32) -> Result<EncodeOutput, WebPError> {
     // For now reserve rgba size.
