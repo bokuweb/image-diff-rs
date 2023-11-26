@@ -29,6 +29,16 @@ pub fn main() {
 }
 ```
 
+``` sh
+cargo run --example compare
+```
+
+## Demo
+
+| img1     | img2         | diff       |
+| --------------- |---------------| -------------------- |
+| ![](https://github.com/bokuweb/pixelmatch-rs/raw/main/fixtures/001a.png) | ![](https://github.com/bokuweb/pixelmatch-rs/raw/main/fixtures/001b.png) |![](https://github.com/bokuweb/pixelmatch-rs/raw/main/assets/diff1.png)|
+
 ## License
 
 Rust glue is provided under the MIT License, and the libwebp is provided by Google under the BSD 3-Clause License.

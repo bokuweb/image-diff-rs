@@ -23,6 +23,12 @@ const imgb = await readFile(PATH_TO_IMAGE_B);
 const result = diff(imga, imgb, { enableAntiAlias: true, threshold: 0.01 });
 ```
 
+## Demo
+
+| img1     | img2         | diff       |
+| --------------- |---------------| -------------------- |
+| ![](https://github.com/bokuweb/pixelmatch-rs/raw/main/fixtures/001a.png) | ![](https://github.com/bokuweb/pixelmatch-rs/raw/main/fixtures/001b.png) |![](https://github.com/bokuweb/pixelmatch-rs/raw/main/assets/diff1.png)|
+
 ## API
 
 ### diff(imga: Uint8Array, imgb: Uint8Array, opts: Opts): Output;
