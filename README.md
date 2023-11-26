@@ -7,10 +7,11 @@ This project provides an image differencing library that supports `PNG`,`JPEG`,`
 The code for `Node.js` and `Deno` is generated using `wit-bindgen` and `jco`.
 
 - JS: https://github.com/bokuweb/image-diff-rs/tree/main/js
+- Wasm: https://github.com/bokuweb/image-diff-rs/tree/main/wasm
 - Rust: https://github.com/bokuweb/image-diff-rs/tree/main/core
 
 
-## Generate JS code.
+## Generate JS code from wasm component.
 
 ```sh
 AR=llvm-ar CFLAGS='--sysroot ../wasi-sdk/share/wasi-sysroot' cargo wasi build --release
