@@ -94,6 +94,12 @@ export interface ErrorEncode {
 
 ## Rust
 
+### Installation
+
+``` toml
+image-diff-rs = { git = "https://github.com/bokuweb/image-diff-rs.git" }
+```
+
 ### examples
 
 ```Rust
