@@ -7,7 +7,10 @@ wit_bindgen::generate!({
  }
 });
 
-struct ImageDiff;
+// re-export
+pub use image_diff_rs::diff;
+
+pub struct ImageDiff;
 
 impl From<ImageDiffError> for bokuweb::image_diff::types::Error {
     fn from(value: ImageDiffError) -> Self {
