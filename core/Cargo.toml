@@ -15,4 +15,4 @@ image = { version = "0.25.0", default-features = false, features=["gif", "jpeg",
 thiserror = "1.0"
 
 [build-dependencies]
-cc = "1.0"
+cc = "1.0.96"
