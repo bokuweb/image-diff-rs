@@ -1,6 +1,19 @@
 extern crate cc;
 
 fn main() {
+    let target = std::env::var("TARGET").expect("TARGET environment variable not set");
+    if target == "wasm32-wasi-preview1-threads" || target == "wasm32-wasip1-threads" {
+        // let wasi_sdk_path =
+        //     std::env::var("WASI_SDK_PATH").expect("WASI_SDK_PATH environment variable not set");
+        // println!(
+        //     "cargo:rustc-env=CFLAGS=--sysroot {}/share/wasi-sysroot",
+        //     wasi_sdk_path
+        // );
+        if let Ok(cflags) = std::env::var("CFLAGS") {
+            println!("cargo:rustc-env=CFLAGS={}", cflags);
+        }
+    }
+
     cc::Build::new()
         .file("src/webp.c")
         .file("../libwebp/src/dec/alpha_dec.c")
