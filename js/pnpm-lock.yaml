@@ -6,21 +6,16 @@ settings:
 
 dependencies:
   '@bytecodealliance/preview2-shim':
-    specifier: ^0.0.21
-    version: 0.0.21
+    specifier: ^0.17.0
+    version: 0.17.0
 
 devDependencies:
   '@bokuweb/image-diff-wasm':
     specifier: 0.1.0
-    version: 0.1.0
+    version: 'link:'
 
 packages:
 
-  /@bokuweb/image-diff-wasm@0.1.0:
-    resolution: {integrity: sha512-huRRxcWfHaLEyOG40ByU9XwVc5TXZjZc1wFBOkNBhUTxcamvxwxwY2OnQeXIBv9rdSzlxjoXsasu2f8leYu4Yg==}
-    dependencies:
-      '@bytecodealliance/preview2-shim': 0.0.21
-    dev: true
-
-  /@bytecodealliance/preview2-shim@0.0.21:
-    resolution: {integrity: sha512-VSqfQ0aAd9CV0KwCtXV8CZnJUMIZLyf3pbDWRNIEbg3YRETYbCrcwCsWDdEXr4qwUAsqjpgY9daCHyicmGlDfQ==}
+  /@bytecodealliance/preview2-shim@0.17.0:
+    resolution: {integrity: sha512-JorcEwe4ud0x5BS/Ar2aQWOQoFzjq/7jcnxYXCvSMh0oRm0dQXzOA+hqLDBnOMks1LLBA7dmiLLsEBl09Yd6iQ==}
+    dev: false
