@@ -21,7 +21,7 @@ pub fn decode_buf(buf: &[u8]) -> Result<DecodeOutput, ImageDiffError> {
             if let Ok(opened) = i {
                 Ok(DecodeOutput {
                     dimensions: opened.dimensions(),
-                    buf: opened.into_bytes(),
+                    buf: opened.to_rgba8().to_vec(),
                 })
             } else {
                 Err(ImageDiffError::Decode(i.unwrap_err().to_string()))
