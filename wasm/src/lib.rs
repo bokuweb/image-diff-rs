@@ -23,11 +23,27 @@ impl From<ImageDiffError> for bokuweb::image_diff::types::Error {
 
 impl From<DiffOutput> for bokuweb::image_diff::types::Output {
     fn from(value: DiffOutput) -> Self {
-        Self {
-            diff_count: value.diff_count as u32,
-            diff_image: value.diff_image,
-            width: value.width,
-            height: value.height,
+        match value {
+            DiffOutput::Matched { width, height } => {
+                Self {
+                    diff_count: 0,
+                    // TODO: for now return default
+                    diff_image: Vec::default(),
+                    width,
+                    height,
+                }
+            }
+            DiffOutput::Unmacthed {
+                diff_count,
+                diff_image,
+                width,
+                height,
+            } => Self {
+                diff_count: diff_count as u32,
+                diff_image,
+                width,
+                height,
+            },
         }
     }
 }

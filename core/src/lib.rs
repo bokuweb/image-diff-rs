@@ -59,10 +59,18 @@ pub fn diff(
         },
     )?;
 
-    Ok(DiffOutput {
-        diff_count: result.diff_count,
-        diff_image: encode(&result.diff_image, result.width, result.height)?,
-        width: result.width,
-        height: result.height,
-    })
+    match result {
+        DiffOutput::Unmacthed {
+            diff_count,
+            diff_image,
+            width,
+            height,
+        } => Ok(DiffOutput::Unmacthed {
+            diff_count,
+            diff_image: encode(&diff_image, width, height)?,
+            width,
+            height,
+        }),
+        DiffOutput::Matched { width, height } => Ok(DiffOutput::Matched { width, height }),
+    }
 }

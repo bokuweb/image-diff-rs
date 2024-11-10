@@ -13,5 +13,10 @@ pub fn main() {
         },
     )
     .unwrap();
-    assert_eq!(result.diff_count, 3454)
+
+    if let DiffOutput::Unmacthed { diff_count, .. } = result {
+        assert_eq!(diff_count, 3454);
+    } else {
+        unreachable!()
+    }
 }
