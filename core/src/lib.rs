@@ -39,6 +39,9 @@ pub fn diff(
     expected: impl AsRef<[u8]>,
     option: &DiffOption,
 ) -> Result<DiffOutput, ImageDiffError> {
+    if actual.as_ref() == expected.as_ref() {
+        return Ok(DiffOutput::Eq);
+    }
     let img1 = decode_buf(actual.as_ref())?;
     let img2 = decode_buf(expected.as_ref())?;
 
@@ -60,17 +63,17 @@ pub fn diff(
     )?;
 
     match result {
-        DiffOutput::Unmacthed {
+        DiffOutput::NotEq {
             diff_count,
             diff_image,
             width,
             height,
-        } => Ok(DiffOutput::Unmacthed {
+        } => Ok(DiffOutput::NotEq {
             diff_count,
             diff_image: encode(&diff_image, width, height)?,
             width,
             height,
         }),
-        DiffOutput::Matched { width, height } => Ok(DiffOutput::Matched { width, height }),
+        DiffOutput::Eq => Ok(DiffOutput::Eq),
     }
 }

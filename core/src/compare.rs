@@ -10,7 +10,7 @@ use super::*;
 ///
 #[derive(Debug, PartialEq, Clone)]
 pub enum DiffOutput {
-    Unmacthed {
+    NotEq {
         /// The total number of pixels that differ between the two images.
         diff_count: usize,
         /// A `Vec<u8>` containing the diff image data (WebP format).
@@ -20,12 +20,7 @@ pub enum DiffOutput {
         /// The height of the diff image.
         height: u32,
     },
-    Matched {
-        /// The width of the diff image.
-        width: u32,
-        /// The height of the diff image.
-        height: u32,
-    },
+    Eq,
 }
 
 #[derive(Debug, Default, PartialEq, Clone)]
@@ -61,13 +56,6 @@ pub fn compare_buf(
     dimensions: (u32, u32),
     opt: CompareOption,
 ) -> Result<DiffOutput, ImageDiffError> {
-    if img1 == img2 {
-        return Ok(DiffOutput::Matched {
-            width: dimensions.0,
-            height: dimensions.1,
-        });
-    }
-
     let result = pixelmatch(
         img1,
         img2,
@@ -80,7 +68,7 @@ pub fn compare_buf(
     )
     .expect("pixelmatch should succeed, but it panicked. This appears to be a bug");
 
-    Ok(DiffOutput::Unmacthed {
+    Ok(DiffOutput::NotEq {
         diff_count: result.diff_count,
         diff_image: result.diff_image,
         width: dimensions.0,
