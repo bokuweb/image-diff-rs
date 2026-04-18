@@ -6,7 +6,7 @@ concurrency:
 
 jobs:
   node:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: js
@@ -21,7 +21,7 @@ jobs:
       - name: test
         run: node examples/index.mjs
   deno:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: js

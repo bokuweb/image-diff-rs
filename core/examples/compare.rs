@@ -10,6 +10,7 @@ pub fn main() {
         &DiffOption {
             threshold: Some(0.01),
             include_anti_alias: Some(true),
+            ..Default::default()
         },
     )
     .unwrap();
