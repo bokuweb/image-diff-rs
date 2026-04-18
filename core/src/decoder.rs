@@ -12,19 +12,36 @@ pub fn decode_buf(buf: &[u8]) -> Result<DecodeOutput, ImageDiffError> {
     match buf {
         // RIFF .... WEBP
         [b'R', b'I', b'F', b'F', _, _, _, _, b'W', b'E', b'B', b'P', ..] => {
+            let _span = tracing::info_span!("decode_webp", bytes = buf.len()).entered();
             Ok(decode_webp_buf(buf).map_err(|_| {
                 ImageDiffError::Decode(("Failed to decode as webp format").to_string())
             })?)
         }
         _ => {
-            let i = image::load_from_memory(buf);
-            if let Ok(opened) = i {
-                Ok(DecodeOutput {
-                    dimensions: opened.dimensions(),
-                    buf: opened.to_rgba8().to_vec(),
-                })
-            } else {
-                Err(ImageDiffError::Decode(i.unwrap_err().to_string()))
+            let _span = tracing::info_span!("decode_image_crate", bytes = buf.len()).entered();
+
+            let opened = {
+                let _s = tracing::info_span!("load_from_memory").entered();
+                image::load_from_memory(buf)
+            };
+            match opened {
+                Ok(img) => {
+                    let dims = img.dimensions();
+                    let buf_rgba = {
+                        let _s = tracing::info_span!(
+                            "to_rgba8",
+                            width = dims.0,
+                            height = dims.1
+                        )
+                        .entered();
+                        img.to_rgba8().to_vec()
+                    };
+                    Ok(DecodeOutput {
+                        dimensions: dims,
+                        buf: buf_rgba,
+                    })
+                }
+                Err(e) => Err(ImageDiffError::Decode(e.to_string())),
             }
         }
     }

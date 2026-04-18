@@ -39,28 +39,64 @@ pub fn diff(
     expected: impl AsRef<[u8]>,
     option: &DiffOption,
 ) -> Result<DiffOutput, ImageDiffError> {
+    let _span = tracing::info_span!(
+        "image_diff",
+        actual_bytes = actual.as_ref().len(),
+        expected_bytes = expected.as_ref().len()
+    )
+    .entered();
+
     if actual.as_ref() == expected.as_ref() {
+        let _s = tracing::info_span!("image_diff.short_circuit_eq").entered();
         return Ok(DiffOutput::Eq);
     }
-    let img1 = decode_buf(actual.as_ref())?;
-    let img2 = decode_buf(expected.as_ref())?;
+
+    let img1 = {
+        let _s = tracing::info_span!(
+            "decode_actual",
+            bytes = actual.as_ref().len()
+        )
+        .entered();
+        decode_buf(actual.as_ref())?
+    };
+    let img2 = {
+        let _s = tracing::info_span!(
+            "decode_expected",
+            bytes = expected.as_ref().len()
+        )
+        .entered();
+        decode_buf(expected.as_ref())?
+    };
 
     let w = std::cmp::max(img1.dimensions.0, img2.dimensions.0);
     let h = std::cmp::max(img1.dimensions.1, img2.dimensions.1);
 
-    // expand ig size is not match.
-    let expanded1 = expander::expand(img1.buf, img1.dimensions, w, h);
-    let expanded2 = expander::expand(img2.buf, img2.dimensions, w, h);
+    // expand if size is not match.
+    let (expanded1, expanded2) = {
+        let _s = tracing::info_span!("expand", width = w, height = h).entered();
+        let e1 = expander::expand(img1.buf, img1.dimensions, w, h);
+        let e2 = expander::expand(img2.buf, img2.dimensions, w, h);
+        (e1, e2)
+    };
 
-    let result = compare_buf(
-        &expanded1,
-        &expanded2,
-        (w, h),
-        CompareOption {
-            threshold: option.threshold.unwrap_or_default(),
-            enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
-        },
-    )?;
+    let result = {
+        let _s = tracing::info_span!(
+            "compare_pixels",
+            width = w,
+            height = h,
+            pixels = (w as u64) * (h as u64)
+        )
+        .entered();
+        compare_buf(
+            &expanded1,
+            &expanded2,
+            (w, h),
+            CompareOption {
+                threshold: option.threshold.unwrap_or_default(),
+                enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
+            },
+        )?
+    };
 
     match result {
         DiffOutput::NotEq {
@@ -68,12 +104,24 @@ pub fn diff(
             diff_image,
             width,
             height,
-        } => Ok(DiffOutput::NotEq {
-            diff_count,
-            diff_image: encode(&diff_image, width, height)?,
-            width,
-            height,
-        }),
+        } => {
+            let encoded = {
+                let _s = tracing::info_span!(
+                    "encode_diff_webp",
+                    width = width,
+                    height = height,
+                    diff_count
+                )
+                .entered();
+                encode(&diff_image, width, height)?
+            };
+            Ok(DiffOutput::NotEq {
+                diff_count,
+                diff_image: encoded,
+                width,
+                height,
+            })
+        }
         DiffOutput::Eq => Ok(DiffOutput::Eq),
     }
 }
