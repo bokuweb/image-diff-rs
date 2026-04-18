@@ -16,12 +16,16 @@ pub use webp::*;
 /// This struct allows users to set various parameters that influence how the image
 /// difference calculation is performed.
 ///
+#[derive(Debug, Default, Clone)]
 pub struct DiffOption {
     /// specifying the sensitivity threshold for pixel differences.
     /// a lower value means more sensitivity to small changes.
     pub threshold: Option<f32>,
     /// that determines whether to include anti-aliased pixels in the diff calculation.
     pub include_anti_alias: Option<bool>,
+    /// Output format for the diff image. `None` (default) keeps the legacy
+    /// behaviour of encoding as WebP lossless.
+    pub encode_format: Option<EncodeFormat>,
 }
 
 /// Compares two images and calculates the differences between them.
@@ -105,15 +109,17 @@ pub fn diff(
             width,
             height,
         } => {
+            let format = option.encode_format.unwrap_or_default();
             let encoded = {
                 let _s = tracing::info_span!(
-                    "encode_diff_webp",
+                    "encode_diff",
                     width = width,
                     height = height,
-                    diff_count
+                    diff_count,
+                    format = ?format
                 )
                 .entered();
-                encode(&diff_image, width, height)?
+                encode_with(&diff_image, width, height, format)?
             };
             Ok(DiffOutput::NotEq {
                 diff_count,
