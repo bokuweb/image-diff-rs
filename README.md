@@ -119,8 +119,19 @@ pub fn main() {
 }
 ```
 
-To avoid encoding a diff image that an application will accept, use the staged
-Rust API:
+To avoid allocating and writing a diff image that an application will accept,
+use the count-only Rust API:
+
+```Rust
+let count = diff_count(&imga, &imgb, &options)?;
+
+if count > accepted_pixel_count {
+    let output = diff(&imga, &imgb, &options)?;
+    // Write the encoded image from `output`.
+}
+```
+
+If rejected comparisons are common, avoid comparing twice with the staged API:
 
 ```Rust
 let rgba_diff = diff_rgba(imga, imgb, &options)?;

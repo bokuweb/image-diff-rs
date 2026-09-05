@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use image_diff_rs::{diff, diff_rgba, encode_diff, DiffOption, EncodeFormat};
+use image_diff_rs::{diff, diff_count, diff_rgba, encode_diff, DiffOption, EncodeFormat};
 
 const ACTUAL: &[u8] = include_bytes!("../../fixtures/sample0.webp");
 const EXPECTED: &[u8] = include_bytes!("../../fixtures/sample1.webp");
@@ -17,6 +17,9 @@ fn bench_diff_pipeline(c: &mut Criterion) {
     });
     group.bench_function("diff_rgba_without_encoding", |b| {
         b.iter(|| diff_rgba(black_box(ACTUAL), black_box(EXPECTED), black_box(&option)))
+    });
+    group.bench_function("diff_count_without_image", |b| {
+        b.iter(|| diff_count(black_box(ACTUAL), black_box(EXPECTED), black_box(&option)))
     });
 
     let rgba = diff_rgba(ACTUAL, EXPECTED, &option).unwrap();

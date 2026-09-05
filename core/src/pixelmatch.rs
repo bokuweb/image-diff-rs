@@ -62,10 +62,28 @@ pub fn pixelmatch(
     dimensions: (u32, u32),
     options: Option<PixelmatchOption>,
 ) -> Result<PixelmatchResult, PixelmatchError> {
+    pixelmatch_impl::<true>(img1, img2, dimensions, options)
+}
+
+pub fn pixelmatch_count(
+    img1: &[u8],
+    img2: &[u8],
+    dimensions: (u32, u32),
+    options: Option<PixelmatchOption>,
+) -> Result<usize, PixelmatchError> {
+    Ok(pixelmatch_impl::<false>(img1, img2, dimensions, options)?.diff_count)
+}
+
+fn pixelmatch_impl<const WRITE_DIFF: bool>(
+    img1: &[u8],
+    img2: &[u8],
+    dimensions: (u32, u32),
+    options: Option<PixelmatchOption>,
+) -> Result<PixelmatchResult, PixelmatchError> {
     if img1.len() != img2.len() {
         return Err(PixelmatchError::ImageLengthError);
     }
-    if img1.len() % 4 != 0 {
+    if img1.len() & 3 != 0 {
         return Err(PixelmatchError::InvalidFormatError);
     }
 
@@ -76,7 +94,11 @@ pub fn pixelmatch(
     let threshold = options.threshold;
     let max_delta = 35215.0 * threshold * threshold;
     let mut diff_count = 0;
-    let mut diff_image: Vec<u8> = vec![0; img1.len()];
+    let mut diff_image = if WRITE_DIFF {
+        vec![0; img1.len()]
+    } else {
+        Vec::new()
+    };
 
     for y in 0..dimensions.1 {
         for x in 0..dimensions.0 {
@@ -90,13 +112,17 @@ pub fn pixelmatch(
                         || anti_aliased(img2, x as usize, y as usize, dimensions, Some(img1)))
                 {
                     // one of the pixels is anti-aliasing; draw as yellow and do not count as difference
-                    draw_pixel(&mut diff_image, pos, options.anti_aliased_color);
+                    if WRITE_DIFF {
+                        draw_pixel(&mut diff_image, pos, options.anti_aliased_color);
+                    }
                 } else {
                     // found substantial difference not caused by anti-aliasing; draw it as red
-                    draw_pixel(&mut diff_image, pos, options.diff_color);
+                    if WRITE_DIFF {
+                        draw_pixel(&mut diff_image, pos, options.diff_color);
+                    }
                     diff_count += 1;
                 }
-            } else {
+            } else if WRITE_DIFF {
                 // pixels are similar; draw background as grayscale image blended with white
                 let y = blend(gray_pixel(img1, pos), 0.1);
                 draw_pixel(&mut diff_image, pos, (y, y, y, 255));
@@ -277,20 +303,31 @@ mod tests {
         let img2 = vec![0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         let result = pixelmatch(&img1, &img2, (2, 2), None).unwrap();
         assert_eq!(result.diff_count, 1);
+        assert_eq!(pixelmatch_count(&img1, &img2, (2, 2), None), Ok(1));
+    }
+
+    #[test]
+    fn count_only_matches_rendered_diff_for_all_options() {
+        let img1 = image(0);
+        let img2 = image(1);
+
+        for include_anti_alias in [false, true] {
+            for threshold in [0.0, 0.01, 0.1, 1.0] {
+                let options = || PixelmatchOption {
+                    threshold,
+                    include_anti_alias,
+                    ..PixelmatchOption::default()
+                };
+                let rendered = pixelmatch(&img1, &img2, (3, 3), Some(options())).unwrap();
+                let count = pixelmatch_count(&img1, &img2, (3, 3), Some(options())).unwrap();
+
+                assert_eq!(count, rendered.diff_count);
+            }
+        }
     }
 
     #[test]
     fn anti_alias_detection_does_not_underflow_at_image_edges() {
-        fn image(mut seed: u64) -> Vec<u8> {
-            let mut rgba = Vec::with_capacity(36);
-            for _ in 0..9 {
-                seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
-                let value = (seed >> 56) as u8;
-                rgba.extend_from_slice(&[value, value, value, 255]);
-            }
-            rgba
-        }
-
         let result = pixelmatch(
             &image(0),
             &image(1),
@@ -303,5 +340,15 @@ mod tests {
         );
 
         assert!(result.is_ok());
+    }
+
+    fn image(mut seed: u64) -> Vec<u8> {
+        let mut rgba = Vec::with_capacity(36);
+        for _ in 0..9 {
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let value = (seed >> 56) as u8;
+            rgba.extend_from_slice(&[value, value, value, 255]);
+        }
+        rgba
     }
 }

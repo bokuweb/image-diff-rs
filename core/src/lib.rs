@@ -67,11 +67,85 @@ pub fn diff_rgba(
     diff_rgba_inner(actual.as_ref(), expected.as_ref(), option)
 }
 
+/// Counts differing pixels without allocating or writing a diff image.
+///
+/// Like [`diff_rgba`], this function always decodes and compares the inputs,
+/// including when their encoded bytes are identical. Use this when accepted
+/// differences do not need a visualization. If a rejected comparison does need
+/// one, call [`diff`] or the staged [`diff_rgba`] and [`encode_diff`] API.
+pub fn diff_count(
+    actual: impl AsRef<[u8]>,
+    expected: impl AsRef<[u8]>,
+    option: &DiffOption,
+) -> Result<usize, ImageDiffError> {
+    let _span = tracing::info_span!(
+        "image_diff_count",
+        actual_bytes = actual.as_ref().len(),
+        expected_bytes = expected.as_ref().len()
+    )
+    .entered();
+
+    let (expanded1, expanded2, width, height) =
+        decode_and_expand(actual.as_ref(), expected.as_ref())?;
+
+    let _s = tracing::info_span!(
+        "compare_pixels_count",
+        width,
+        height,
+        pixels = (width as u64) * (height as u64)
+    )
+    .entered();
+    compare_count_buf(
+        &expanded1,
+        &expanded2,
+        (width, height),
+        compare_option(option),
+    )
+}
+
 fn diff_rgba_inner(
     actual: &[u8],
     expected: &[u8],
     option: &DiffOption,
 ) -> Result<RgbaDiff, ImageDiffError> {
+    let (expanded1, expanded2, width, height) = decode_and_expand(actual, expected)?;
+
+    let result = {
+        let _s = tracing::info_span!(
+            "compare_pixels",
+            width,
+            height,
+            pixels = (width as u64) * (height as u64)
+        )
+        .entered();
+        compare_buf(
+            &expanded1,
+            &expanded2,
+            (width, height),
+            compare_option(option),
+        )?
+    };
+
+    match result {
+        DiffOutput::NotEq {
+            diff_count,
+            diff_image,
+            width,
+            height,
+        } => Ok(RgbaDiff {
+            diff_count,
+            rgba: diff_image,
+            width,
+            height,
+        }),
+        DiffOutput::Eq => unreachable!("compare_buf always returns a diff image"),
+    }
+}
+
+fn decode_and_expand(
+    actual: &[u8],
+    expected: &[u8],
+) -> Result<(Vec<u8>, Vec<u8>, u32, u32), ImageDiffError> {
     let img1 = {
         let _s = tracing::info_span!("decode_actual", bytes = actual.len()).entered();
         decode_buf(actual)?
@@ -91,38 +165,13 @@ fn diff_rgba_inner(
         (e1, e2)
     };
 
-    let result = {
-        let _s = tracing::info_span!(
-            "compare_pixels",
-            width,
-            height,
-            pixels = (width as u64) * (height as u64)
-        )
-        .entered();
-        compare_buf(
-            &expanded1,
-            &expanded2,
-            (width, height),
-            CompareOption {
-                threshold: option.threshold.unwrap_or_default(),
-                enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
-            },
-        )?
-    };
+    Ok((expanded1, expanded2, width, height))
+}
 
-    match result {
-        DiffOutput::NotEq {
-            diff_count,
-            diff_image,
-            width,
-            height,
-        } => Ok(RgbaDiff {
-            diff_count,
-            rgba: diff_image,
-            width,
-            height,
-        }),
-        DiffOutput::Eq => unreachable!("compare_buf always returns a diff image"),
+fn compare_option(option: &DiffOption) -> CompareOption {
+    CompareOption {
+        threshold: option.threshold.unwrap_or_default(),
+        enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
     }
 }
 
@@ -202,6 +251,24 @@ mod tests {
         assert_eq!(result.diff_count, 3454);
         assert_eq!((result.width, result.height), (800, 578));
         assert_eq!(result.rgba.len(), 800 * 578 * 4);
+    }
+
+    #[test]
+    fn count_only_matches_rgba_diff() {
+        for include_anti_alias in [false, true] {
+            for threshold in [0.0, 0.01, 0.1, 1.0] {
+                let option = DiffOption {
+                    threshold: Some(threshold),
+                    include_anti_alias: Some(include_anti_alias),
+                    ..Default::default()
+                };
+
+                assert_eq!(
+                    diff_count(ACTUAL, EXPECTED, &option).unwrap(),
+                    diff_rgba(ACTUAL, EXPECTED, &option).unwrap().diff_count
+                );
+            }
+        }
     }
 
     #[test]

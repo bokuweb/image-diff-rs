@@ -75,3 +75,24 @@ pub fn compare_buf(
         height: dimensions.1,
     })
 }
+
+pub(crate) fn compare_count_buf(
+    img1: &[u8],
+    img2: &[u8],
+    dimensions: (u32, u32),
+    opt: CompareOption,
+) -> Result<usize, ImageDiffError> {
+    let diff_count = pixelmatch_count(
+        img1,
+        img2,
+        dimensions,
+        Some(PixelmatchOption {
+            threshold: opt.threshold,
+            include_anti_alias: true,
+            ..PixelmatchOption::default()
+        }),
+    )
+    .expect("pixelmatch should succeed, but it panicked. This appears to be a bug");
+
+    Ok(diff_count)
+}
