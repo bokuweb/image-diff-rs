@@ -28,6 +28,125 @@ pub struct DiffOption {
     pub encode_format: Option<EncodeFormat>,
 }
 
+/// An unencoded image diff.
+///
+/// The RGBA buffer can be encoded with [`encode_diff`] after a caller has
+/// inspected `diff_count`, `width`, and `height`. This is useful when a caller
+/// applies its own acceptance threshold and does not need an image for accepted
+/// differences.
+#[derive(Debug, PartialEq, Clone)]
+pub struct RgbaDiff {
+    /// The total number of pixels that differ between the two images.
+    pub diff_count: usize,
+    /// The unencoded diff image as RGBA pixels.
+    pub rgba: Vec<u8>,
+    /// The width of the diff image.
+    pub width: u32,
+    /// The height of the diff image.
+    pub height: u32,
+}
+
+/// Compares two encoded images without encoding the resulting diff image.
+///
+/// Unlike [`diff`], this function always decodes and compares the inputs,
+/// including when their encoded bytes are identical. Call [`encode_diff`] only
+/// when the RGBA visualization is needed.
+pub fn diff_rgba(
+    actual: impl AsRef<[u8]>,
+    expected: impl AsRef<[u8]>,
+    option: &DiffOption,
+) -> Result<RgbaDiff, ImageDiffError> {
+    let _span = tracing::info_span!(
+        "image_diff_rgba",
+        actual_bytes = actual.as_ref().len(),
+        expected_bytes = expected.as_ref().len()
+    )
+    .entered();
+
+    diff_rgba_inner(actual.as_ref(), expected.as_ref(), option)
+}
+
+fn diff_rgba_inner(
+    actual: &[u8],
+    expected: &[u8],
+    option: &DiffOption,
+) -> Result<RgbaDiff, ImageDiffError> {
+    let img1 = {
+        let _s = tracing::info_span!("decode_actual", bytes = actual.len()).entered();
+        decode_buf(actual)?
+    };
+    let img2 = {
+        let _s = tracing::info_span!("decode_expected", bytes = expected.len()).entered();
+        decode_buf(expected)?
+    };
+
+    let width = std::cmp::max(img1.dimensions.0, img2.dimensions.0);
+    let height = std::cmp::max(img1.dimensions.1, img2.dimensions.1);
+
+    let (expanded1, expanded2) = {
+        let _s = tracing::info_span!("expand", width, height).entered();
+        let e1 = expander::expand(img1.buf, img1.dimensions, width, height);
+        let e2 = expander::expand(img2.buf, img2.dimensions, width, height);
+        (e1, e2)
+    };
+
+    let result = {
+        let _s = tracing::info_span!(
+            "compare_pixels",
+            width,
+            height,
+            pixels = (width as u64) * (height as u64)
+        )
+        .entered();
+        compare_buf(
+            &expanded1,
+            &expanded2,
+            (width, height),
+            CompareOption {
+                threshold: option.threshold.unwrap_or_default(),
+                enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
+            },
+        )?
+    };
+
+    match result {
+        DiffOutput::NotEq {
+            diff_count,
+            diff_image,
+            width,
+            height,
+        } => Ok(RgbaDiff {
+            diff_count,
+            rgba: diff_image,
+            width,
+            height,
+        }),
+        DiffOutput::Eq => unreachable!("compare_buf always returns a diff image"),
+    }
+}
+
+/// Encodes an [`RgbaDiff`] and returns the legacy [`DiffOutput`] shape.
+pub fn encode_diff(diff: &RgbaDiff, format: EncodeFormat) -> Result<DiffOutput, ImageDiffError> {
+    let encoded = {
+        let _s = tracing::info_span!(
+            "encode_diff",
+            width = diff.width,
+            height = diff.height,
+            diff_count = diff.diff_count,
+            format = ?format
+        )
+        .entered();
+        encode_with(&diff.rgba, diff.width, diff.height, format)?
+    };
+
+    Ok(DiffOutput::NotEq {
+        diff_count: diff.diff_count,
+        diff_image: encoded,
+        width: diff.width,
+        height: diff.height,
+    })
+}
+
 /// Compares two images and calculates the differences between them.
 ///
 /// This function takes two images as byte slices and an options struct, and returns
@@ -55,79 +174,70 @@ pub fn diff(
         return Ok(DiffOutput::Eq);
     }
 
-    let img1 = {
-        let _s = tracing::info_span!(
-            "decode_actual",
-            bytes = actual.as_ref().len()
-        )
-        .entered();
-        decode_buf(actual.as_ref())?
-    };
-    let img2 = {
-        let _s = tracing::info_span!(
-            "decode_expected",
-            bytes = expected.as_ref().len()
-        )
-        .entered();
-        decode_buf(expected.as_ref())?
-    };
+    let result = diff_rgba_inner(actual.as_ref(), expected.as_ref(), option)?;
+    encode_diff(&result, option.encode_format.unwrap_or_default())
+}
 
-    let w = std::cmp::max(img1.dimensions.0, img2.dimensions.0);
-    let h = std::cmp::max(img1.dimensions.1, img2.dimensions.1);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    // expand if size is not match.
-    let (expanded1, expanded2) = {
-        let _s = tracing::info_span!("expand", width = w, height = h).entered();
-        let e1 = expander::expand(img1.buf, img1.dimensions, w, h);
-        let e2 = expander::expand(img2.buf, img2.dimensions, w, h);
-        (e1, e2)
-    };
+    const ACTUAL: &[u8] = include_bytes!("../../fixtures/sample0.webp");
+    const EXPECTED: &[u8] = include_bytes!("../../fixtures/sample1.webp");
 
-    let result = {
-        let _s = tracing::info_span!(
-            "compare_pixels",
-            width = w,
-            height = h,
-            pixels = (w as u64) * (h as u64)
-        )
-        .entered();
-        compare_buf(
-            &expanded1,
-            &expanded2,
-            (w, h),
-            CompareOption {
-                threshold: option.threshold.unwrap_or_default(),
-                enable_anti_alias: option.include_anti_alias.unwrap_or_default(),
+    #[test]
+    fn rgba_diff_exposes_metadata_before_encoding() {
+        let result = diff_rgba(
+            ACTUAL,
+            EXPECTED,
+            &DiffOption {
+                threshold: Some(0.01),
+                include_anti_alias: Some(true),
+                ..Default::default()
             },
-        )?
-    };
+        )
+        .unwrap();
 
-    match result {
-        DiffOutput::NotEq {
-            diff_count,
-            diff_image,
-            width,
-            height,
-        } => {
-            let format = option.encode_format.unwrap_or_default();
-            let encoded = {
-                let _s = tracing::info_span!(
-                    "encode_diff",
-                    width = width,
-                    height = height,
-                    diff_count,
-                    format = ?format
-                )
-                .entered();
-                encode_with(&diff_image, width, height, format)?
-            };
-            Ok(DiffOutput::NotEq {
-                diff_count,
-                diff_image: encoded,
-                width,
-                height,
-            })
-        }
-        DiffOutput::Eq => Ok(DiffOutput::Eq),
+        assert_eq!(result.diff_count, 3454);
+        assert_eq!((result.width, result.height), (800, 578));
+        assert_eq!(result.rgba.len(), 800 * 578 * 4);
+    }
+
+    #[test]
+    fn staged_webp_output_matches_diff() {
+        let option = DiffOption {
+            threshold: Some(0.01),
+            include_anti_alias: Some(true),
+            ..Default::default()
+        };
+        let rgba = diff_rgba(ACTUAL, EXPECTED, &option).unwrap();
+
+        assert_eq!(
+            encode_diff(&rgba, EncodeFormat::Webp).unwrap(),
+            diff(ACTUAL, EXPECTED, &option).unwrap()
+        );
+    }
+
+    #[test]
+    fn staged_png_output_matches_diff() {
+        let option = DiffOption {
+            threshold: Some(0.01),
+            include_anti_alias: Some(true),
+            encode_format: Some(EncodeFormat::Png),
+        };
+        let rgba = diff_rgba(ACTUAL, EXPECTED, &option).unwrap();
+
+        assert_eq!(
+            encode_diff(&rgba, EncodeFormat::Png).unwrap(),
+            diff(ACTUAL, EXPECTED, &option).unwrap()
+        );
+    }
+
+    #[test]
+    fn diff_keeps_identical_input_short_circuit() {
+        assert_eq!(
+            diff(ACTUAL, ACTUAL, &DiffOption::default()).unwrap(),
+            DiffOutput::Eq
+        );
     }
 }
