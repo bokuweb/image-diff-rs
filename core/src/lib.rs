@@ -3,6 +3,7 @@ mod decoder;
 mod encoder;
 mod error;
 mod expander;
+mod pixelmatch;
 mod webp;
 
 pub use compare::*;
@@ -231,6 +232,41 @@ mod tests {
             encode_diff(&rgba, EncodeFormat::Png).unwrap(),
             diff(ACTUAL, EXPECTED, &option).unwrap()
         );
+    }
+
+    #[test]
+    fn encoded_outputs_remain_byte_compatible() {
+        fn fnv1a(bytes: &[u8]) -> u64 {
+            bytes.iter().fold(0xcbf29ce484222325, |hash, byte| {
+                (hash ^ u64::from(*byte)).wrapping_mul(0x100000001b3)
+            })
+        }
+
+        for (format, expected_len, expected_hash) in [
+            (EncodeFormat::Webp, 7460, 0x0ea7fdd2612e399f),
+            (EncodeFormat::Png, 37581, 0xc751afd428297407),
+        ] {
+            let option = DiffOption {
+                threshold: Some(0.01),
+                include_anti_alias: Some(true),
+                encode_format: Some(format),
+            };
+            let result = diff(ACTUAL, EXPECTED, &option).unwrap();
+            let DiffOutput::NotEq {
+                diff_count,
+                diff_image,
+                width,
+                height,
+            } = result
+            else {
+                panic!("fixture images must differ");
+            };
+
+            assert_eq!(diff_count, 3454);
+            assert_eq!((width, height), (800, 578));
+            assert_eq!(diff_image.len(), expected_len);
+            assert_eq!(fnv1a(&diff_image), expected_hash);
+        }
     }
 
     #[test]

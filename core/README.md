@@ -56,4 +56,6 @@ cargo run --example compare
 
 ## License
 
-Rust glue is provided under the MIT License, and the libwebp is provided by Google under the BSD 3-Clause License.
+Rust glue is provided under the MIT License, the embedded pixel comparison
+algorithm is provided by Mapbox under the ISC License, and libwebp is provided
+by Google under the BSD 3-Clause License.
