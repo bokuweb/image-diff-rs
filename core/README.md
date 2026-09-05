@@ -29,8 +29,21 @@ pub fn main() {
 }
 ```
 
-If the caller only needs a diff image after applying its own acceptance
-threshold, compare first and encode conditionally:
+If accepted differences do not need a diff image, use the count-only API. It
+does not allocate or write the width × height × 4 visualization buffer:
+
+```Rust
+let count = diff_count(&imga, &imgb, &options)?;
+
+if count > accepted_pixel_count {
+    let output = diff(&imga, &imgb, &options)?;
+    // Write the encoded image from `output`.
+}
+```
+
+This is best when accepted comparisons are common. When rejected comparisons
+are common, avoid comparing twice by using the staged API and encoding
+conditionally:
 
 ```Rust
 let rgba_diff = diff_rgba(imga, imgb, &options)?;
