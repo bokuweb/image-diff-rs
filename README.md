@@ -119,6 +119,20 @@ pub fn main() {
 }
 ```
 
+To avoid encoding a diff image that an application will accept, use the staged
+Rust API:
+
+```Rust
+let rgba_diff = diff_rgba(imga, imgb, &options)?;
+
+if rgba_diff.diff_count > accepted_pixel_count {
+    let output = encode_diff(&rgba_diff, EncodeFormat::Webp)?;
+    // Write the encoded image from `output`.
+}
+```
+
+`diff` keeps its existing compare-and-encode behavior.
+
 ``` sh
 cargo run --example compare
 ```

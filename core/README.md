@@ -29,6 +29,21 @@ pub fn main() {
 }
 ```
 
+If the caller only needs a diff image after applying its own acceptance
+threshold, compare first and encode conditionally:
+
+```Rust
+let rgba_diff = diff_rgba(imga, imgb, &options)?;
+
+if rgba_diff.diff_count > accepted_pixel_count {
+    let output = encode_diff(&rgba_diff, EncodeFormat::Webp)?;
+    // Write the encoded image from `output`.
+}
+```
+
+`diff_rgba` returns the diff count, dimensions, and unencoded RGBA pixels.
+The existing `diff` function remains the convenient compare-and-encode API.
+
 ``` sh
 cargo run --example compare
 ```
