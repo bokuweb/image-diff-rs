@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use pixelmatch::*;
+use crate::pixelmatch::*;
 
 use super::*;
 

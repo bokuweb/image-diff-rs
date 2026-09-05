@@ -10,7 +10,6 @@ name = "image_diff_rs"
 path = "src/lib.rs"
 
 [dependencies]
-pixelmatch-rs = { git = "https://github.com/bokuweb/pixelmatch-rs.git" }
 image = { version = "0.25.0", default-features = false, features=["gif", "jpeg", "png", "tiff", "bmp"] }
 thiserror = "2.0"
 tracing = "0.1"

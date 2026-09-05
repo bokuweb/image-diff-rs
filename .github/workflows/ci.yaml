@@ -33,6 +33,23 @@ jobs:
       - name: test
         run: deno run -A examples/index.mjs
 
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.74.0
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-targets --locked
+
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
