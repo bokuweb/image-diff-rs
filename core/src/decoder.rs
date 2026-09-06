@@ -34,7 +34,7 @@ pub fn decode_buf(buf: &[u8]) -> Result<DecodeOutput, ImageDiffError> {
                             height = dims.1
                         )
                         .entered();
-                        img.to_rgba8().to_vec()
+                        img.into_rgba8().into_raw()
                     };
                     Ok(DecodeOutput {
                         dimensions: dims,
@@ -60,9 +60,11 @@ fn test_decode_webp_buf() {
 #[test]
 fn test_decode_png_buf() {
     let buf = include_bytes!("../../fixtures/sample0.png");
+    let expected = image::load_from_memory(buf).unwrap().to_rgba8().to_vec();
     let res = decode_buf(buf);
     assert!(res.is_ok());
     let decoded = res.unwrap();
     assert_eq!(decoded.dimensions.0, 800);
     assert_eq!(decoded.dimensions.1, 578);
+    assert_eq!(decoded.buf, expected);
 }
